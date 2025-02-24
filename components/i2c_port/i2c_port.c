@@ -19,16 +19,11 @@ static i2c_port_internal_t _i2c_port[I2C_NUM_MAX] = {0};
 
 void* i2c_port_init(int i2c_port_num, int sda_io_num, int scl_io_num, uint8_t i2c_address, uint32_t frequency_hz)
 {
+    ESP_LOGD(TAG, "i2c_port_init");
+
     if ((i2c_port_num < 0) || (i2c_port_num >= I2C_NUM_MAX))
     {
         ESP_LOGE(TAG, "i2c_port_num arg invalid");
-        return NULL;
-    }
-
-    i2c_master_dev_handle_t *handle = malloc(sizeof(i2c_master_dev_handle_t));
-    if (handle == NULL)
-    {
-        ESP_LOGE(TAG, "Failed to allocate memory");
         return NULL;
     }
 
@@ -54,9 +49,9 @@ void* i2c_port_init(int i2c_port_num, int sda_io_num, int scl_io_num, uint8_t i2
         .device_address = i2c_address,
         .scl_speed_hz = frequency_hz,
     };
-    if (i2c_master_bus_add_device(_i2c_port[i2c_port_num].bus_handle, &dev_config, handle) != ESP_OK)
+    i2c_master_dev_handle_t dev_handle = NULL;
+    if (i2c_master_bus_add_device(_i2c_port[i2c_port_num].bus_handle, &dev_config, &dev_handle) != ESP_OK)
     {
-        free(handle);
         i2c_del_master_bus(_i2c_port[i2c_port_num].bus_handle);
         ESP_LOGE(TAG, "Failed to i2c_master_bus_add_device");
         return NULL;
@@ -64,11 +59,22 @@ void* i2c_port_init(int i2c_port_num, int sda_io_num, int scl_io_num, uint8_t i2
 
     _i2c_port[i2c_port_num].is_new_bus = 1;
 
-    return handle;
+    if ( i2c_master_probe(_i2c_port[i2c_port_num].bus_handle, i2c_address, I2C_MASTER_TIMEOUT_MS) != ESP_OK)
+    {
+        ESP_LOGE(TAG, "Failed to i2c_master_probe at address 0x%02X", i2c_address);
+    }
+    else
+    {
+        ESP_LOGI(TAG, "I2C device found at address 0x%02X", i2c_address);
+    }
+
+    return dev_handle;
 }
 
 int i2c_port_register_read(void *handle, uint8_t reg_address, uint8_t *data, size_t size)
 {
+    ESP_LOGD(TAG, "i2c_port_register_read");
+
     if ((handle == NULL) || (data == NULL) || (size == 0))
     {
         ESP_LOGE(TAG, "Args invalid");
@@ -80,6 +86,8 @@ int i2c_port_register_read(void *handle, uint8_t reg_address, uint8_t *data, siz
 
 int i2c_port_register_write(void *handle, uint8_t reg_address, uint8_t *data, size_t size)
 {
+    ESP_LOGD(TAG, "i2c_port_register_write");
+
     if ((handle == NULL) || (data == NULL) || (size == 0))
     {
         ESP_LOGE(TAG, "Args invalid");
