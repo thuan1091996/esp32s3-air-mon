@@ -179,6 +179,7 @@ int apc1_read_infor()
     memcpy(sensor_infor.FW_Version, &response[Index_FW_Version], LEN_FW_Version);
 
     _apc1_sensor_infor = sensor_infor;
+#if (APC1_LOG_ENABLE != 0)
     ESP_LOGI(TAG, "Sensor infor:");
     ESP_LOGI(TAG, "Name: %s", sensor_infor.Name);
     ESP_LOGI(TAG, "Type: %d", sensor_infor.Type);
@@ -186,7 +187,7 @@ int apc1_read_infor()
             sensor_infor.Serial_Number[0], sensor_infor.Serial_Number[1], sensor_infor.Serial_Number[2], sensor_infor.Serial_Number[3],
             sensor_infor.Serial_Number[4], sensor_infor.Serial_Number[5], sensor_infor.Serial_Number[6], sensor_infor.Serial_Number[7]);
     ESP_LOGI(TAG, "Firmware version: %02X%02X", sensor_infor.FW_Version[0], sensor_infor.FW_Version[1]);
-
+#endif /* End of (APC1_LOG_ENABLE != 0) */
     return ESP_OK;
 }
 
@@ -244,7 +245,8 @@ int apc1_measurement()
     _apc1_measure_data = measure_data;
 
     _apc1_mode = Mode_Measurement;
-	
+
+#if (APC1_LOG_ENABLE != 0)
     // Logging measurement data
     ESP_LOGI(TAG, "Measurement data:");
     ESP_LOGI(TAG, "PM1.0: %d", measure_data.PM_1_0);
@@ -272,6 +274,7 @@ int apc1_measurement()
     ESP_LOGI(TAG, "Air Quality Index: %d", measure_data.AQI);
     ESP_LOGI(TAG, "Firmware version: %d", measure_data.FW_Version);
     ESP_LOGI(TAG, "Error code: %d", measure_data.ErrorCode);
+#endif /* End of (APC1_LOG_ENABLE != 0) */
 
     return ESP_OK;
 }

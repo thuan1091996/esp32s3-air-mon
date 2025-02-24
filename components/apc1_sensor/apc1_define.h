@@ -9,6 +9,8 @@
 extern "C" {
 #endif
 
+#define APC1_LOG_ENABLE (1)     // 1: Enable debug logging
+
 typedef enum {
     APC1_I2C_Address = 0x12,    // Device’s I2C address (7 bit)
     APC1_I2C_Frequency = 100000 // I2C standard mode (100kHz)
