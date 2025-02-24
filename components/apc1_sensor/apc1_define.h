@@ -93,22 +93,6 @@ typedef enum {
 } apc1_measure_data_scale_t;
 
 typedef struct {
-    union {
-        uint8_t byte;
-        struct {
-            uint8_t too_many_fan_restarts       :1;
-            uint8_t fan_speed_low               :1;
-            uint8_t photodiode                  :1;
-            uint8_t fan_stopped                 :1;
-            uint8_t laser                       :1;
-            uint8_t voc_Sensor                  :1;
-            uint8_t temperature_humidity_sensor :1;
-            uint8_t reserved                    :1;
-        };
-    };
-} apc1_error_code_t;
-
-typedef struct {
     uint16_t PM_1_0;            // PM1.0 mass concentration
     uint16_t PM_2_5;            // PM2.5 mass concentration
     uint16_t PM_10;             // PM10  mass concentration

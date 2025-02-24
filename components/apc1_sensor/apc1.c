@@ -4,11 +4,10 @@
 
 #include "i2c_port.h"
 
-#include "driver/gpio.h"
-
 #include "esp_err.h"
 #include "esp_log.h"
 
+#include "driver/gpio.h"
 #include "freertos/FreeRTOS.h"
 
 // TODO need to be redefined
@@ -180,7 +179,6 @@ int apc1_read_infor()
     memcpy(sensor_infor.FW_Version, &response[Index_FW_Version], LEN_FW_Version);
 
     _apc1_sensor_infor = sensor_infor;
-    // Logging sensor infor
     ESP_LOGI(TAG, "Sensor infor:");
     ESP_LOGI(TAG, "Name: %s", sensor_infor.Name);
     ESP_LOGI(TAG, "Type: %d", sensor_infor.Type);
@@ -345,4 +343,129 @@ int acp1_set_deep_sleep_mode(int enable)
     vTaskDelay(pdMS_TO_TICKS(10)); // Delay for 10 milliseconds
 #endif
     return ESP_OK;
+}
+
+uint16_t apc1_get_pm1_0()
+{
+    return _apc1_measure_data.PM_1_0;
+}
+
+uint16_t apc1_get_pm2_5()
+{
+    return _apc1_measure_data.PM_2_5;
+}
+
+uint16_t apc1_get_pm10()
+{
+    return _apc1_measure_data.PM_10;
+}
+
+uint16_t apc1_get_pmInAir_1_0()
+{
+    return _apc1_measure_data.PMInAir_1_0;
+}
+
+uint16_t apc1_get_pmInAir_2_5()
+{
+    return _apc1_measure_data.PMInAir_2_5;
+}
+
+uint16_t apc1_get_pmInAir_10()
+{
+    return _apc1_measure_data.PMInAir_10;
+}
+
+uint16_t apc1_get_noParticles_0_3()
+{
+    return _apc1_measure_data.NoParticles_0_3;
+}
+
+uint16_t apc1_get_noParticles_0_5()
+{
+    return _apc1_measure_data.NoParticles_0_5;
+}
+
+uint16_t apc1_get_noParticles_1_0()
+{
+    return _apc1_measure_data.NoParticles_1_0;
+}
+
+uint16_t apc1_get_noParticles_2_5()
+{
+    return _apc1_measure_data.NoParticles_2_5;
+}
+
+uint16_t apc1_get_noParticles_5_0()
+{
+    return _apc1_measure_data.NoParticles_5_0;
+}
+
+uint16_t apc1_get_noParticles_10()
+{
+    return _apc1_measure_data.NoParticles_10;
+}
+
+uint16_t apc1_get_TVOC()
+{
+    return _apc1_measure_data.TVOC;
+}
+
+uint16_t apc1_get_ECO2()
+{
+    return _apc1_measure_data.ECO2;
+}
+
+float apc1_get_T_comp()
+{
+    return _apc1_measure_data.T_comp / Temperature_Humidity_Scale;
+}
+
+float apc1_get_RH_comp()
+{
+    return _apc1_measure_data.RH_comp / Temperature_Humidity_Scale;
+}
+
+float apc1_get_T_raw()
+{
+    return _apc1_measure_data.T_raw / Temperature_Humidity_Scale;
+}
+
+float apc1_get_RH_raw()
+{
+    return _apc1_measure_data.RH_raw / Temperature_Humidity_Scale;
+}
+
+uint32_t apc1_get_RS0()
+{
+    return _apc1_measure_data.RS0;
+}
+
+uint32_t apc1_get_RS1()
+{
+    return _apc1_measure_data.RS1;
+}
+
+uint32_t apc1_get_RS2()
+{
+    return _apc1_measure_data.RS2;
+}
+
+uint32_t apc1_get_RS3()
+{
+    return _apc1_measure_data.RS3;
+}
+
+uint8_t apc1_get_AQI()
+{
+    return _apc1_measure_data.AQI;
+}
+
+uint8_t apc1_get_FW_Version()
+{
+    return _apc1_measure_data.FW_Version;
+}
+
+apc1_error_code_t apc1_get_ErrorCode()
+{
+    return *((apc1_error_code_t*)&_apc1_measure_data.ErrorCode);
 }
