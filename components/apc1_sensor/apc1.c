@@ -84,15 +84,24 @@ static int __apc1_response(uint8_t *data, size_t size)
         return ESP_ERR_INVALID_ARG;
     }
 
-    if (i2c_port_register_read(_acp1_i2c_port_handle, Response_Register, data, size) != ESP_OK)
+    // Delay for 100 milliseconds to wait for the sensor to process the request
+    vTaskDelay(pdMS_TO_TICKS(100));
+
+    if (i2c_port_register_read(_acp1_i2c_port_handle, Response_Register+57, data, size) != ESP_OK)
     {
         ESP_LOGE(TAG, "Read i2c response fail");
         return ESP_FAIL;
     }
 
-    if (__apc1_checksum(data, size - 2) != (uint16_t)((data[size - 2] << 8) + data[size - 1]))
+    uint16_t cal_checksum = __apc1_checksum(data, size - 2);
+
+    if (cal_checksum != (uint16_t)((data[size - 2] << 8) + data[size - 1]))
     {
         ESP_LOGE(TAG, "Response checksum fail");
+        ESP_LOGE(TAG, "Calculated checksum: 0x%04X", cal_checksum);
+        ESP_LOGE(TAG, "Received checksum: 0x%04X", (uint16_t)((data[size - 2] << 8) + data[size - 1]));
+        //Dump the response data
+        ESP_LOG_BUFFER_HEX(TAG, data, size);
         return ESP_ERR_INVALID_RESPONSE;
     }
 
