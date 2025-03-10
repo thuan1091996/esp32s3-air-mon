@@ -12,13 +12,15 @@ extern "C" {
 #define APC1_LOG_ENABLE (1)     // 1: Enable debug logging
 
 typedef enum {
-    APC1_I2C_Address = 0x12,    // Device’s I2C address (7 bit)
+    APC1_I2C_Address   = 0x12,  // Device’s I2C address (7 bit)
     APC1_I2C_Frequency = 100000 // I2C standard mode (100kHz)
 } apc1_i2c_define_t;
 
 typedef enum {
-    Request_Register  = 0x40,
-    Response_Register = 0x47
+    Request_Register              = 0x40,
+    Response_Idle_Register        = 0x47,
+    Response_Infor_Register       = 0x47,
+    Response_Measurement_Register = 0x80,
 } apc1_register_t;
 
 typedef enum {

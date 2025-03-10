@@ -76,7 +76,7 @@ static int __apc1_request(uint8_t command, uint8_t mode)
     return ESP_OK;
 }
 
-static int __apc1_response(uint8_t *data, size_t size)
+static int __apc1_response(uint8_t reg_address, uint8_t *data, size_t size)
 {
     if ((data == NULL) || (size == 0))
     {
@@ -87,7 +87,7 @@ static int __apc1_response(uint8_t *data, size_t size)
     // Delay for 100 milliseconds to wait for the sensor to process the request
     vTaskDelay(pdMS_TO_TICKS(100));
 
-    if (i2c_port_register_read(_acp1_i2c_port_handle, Response_Register+57, data, size) != ESP_OK)
+    if (i2c_port_register_read(_acp1_i2c_port_handle, reg_address, data, size) != ESP_OK)
     {
         ESP_LOGE(TAG, "Read i2c response fail");
         return ESP_FAIL;
@@ -169,7 +169,7 @@ int apc1_read_infor()
     }
 
     uint8_t response[Read_Infor_Response_Lenght];
-    if (__apc1_response(response, sizeof(response)) != ESP_OK)
+    if (__apc1_response(Response_Infor_Register, response, sizeof(response)) != ESP_OK)
     {
         ESP_LOGE(TAG, "Read infor response fail");
         return ESP_FAIL;
@@ -217,7 +217,7 @@ int apc1_measurement()
     }
 
     uint8_t response[Set_Measurement_Mode_Response_Lenght];
-    if (__apc1_response(response, sizeof(response)) != ESP_OK)
+    if (__apc1_response(Response_Measurement_Register, response, sizeof(response)) != ESP_OK)
     {
         ESP_LOGE(TAG, "Read measurement response fail");
         return ESP_FAIL;
@@ -305,7 +305,7 @@ int apc1_set_idle_mode()
     }
 
     uint8_t response[Set_Idle_Mode_Response_Lenght];
-    if (__apc1_response(response, sizeof(response)) != ESP_OK)
+    if (__apc1_response(Response_Idle_Register, response, sizeof(response)) != ESP_OK)
     {
         ESP_LOGE(TAG, "Read idle mode response fail");
         return ESP_FAIL;
