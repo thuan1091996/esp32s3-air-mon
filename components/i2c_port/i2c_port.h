@@ -14,7 +14,9 @@ extern "C" {
 
 void* i2c_port_init(int i2c_port_num, int sda_io_num, int scl_io_num, uint8_t i2c_address, uint32_t frequency_hz);
 
+int i2c_port_read(void* handle, uint8_t *data, size_t size);
 int i2c_port_register_read(void *handle, uint8_t reg_address, uint8_t *data, size_t size);
+
 int i2c_port_register_write(void *handle, uint8_t reg_address, uint8_t *data, size_t size);
 
 #ifdef __cplusplus

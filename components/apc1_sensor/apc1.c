@@ -87,7 +87,18 @@ static int __apc1_response(uint8_t reg_address, uint8_t *data, size_t size)
     // Delay for 100 milliseconds to wait for the sensor to process the request
     vTaskDelay(pdMS_TO_TICKS(100));
 
-    if (i2c_port_register_read(_acp1_i2c_port_handle, reg_address, data, size) != ESP_OK)
+    int ret;
+
+    if (reg_address)
+    {
+        ret = i2c_port_register_read(_acp1_i2c_port_handle, reg_address, data, size);
+    }
+    else
+    {
+        ret = i2c_port_read(_acp1_i2c_port_handle, data, size);
+    }
+
+    if (ret != ESP_OK)
     {
         ESP_LOGE(TAG, "Read i2c response fail");
         return ESP_FAIL;
@@ -106,6 +117,69 @@ static int __apc1_response(uint8_t reg_address, uint8_t *data, size_t size)
     }
 
     return ESP_OK;
+}
+
+static apc1_measure_data_t __apc1_parse_measurement_data(uint8_t raw_data[])
+{
+    apc1_measure_data_t measure_data;
+
+    ACP1_PARSE_DATA_U16(measure_data, raw_data, PM_1_0);
+    ACP1_PARSE_DATA_U16(measure_data, raw_data, PM_2_5);
+    ACP1_PARSE_DATA_U16(measure_data, raw_data, PM_10);
+    ACP1_PARSE_DATA_U16(measure_data, raw_data, PMInAir_1_0);
+    ACP1_PARSE_DATA_U16(measure_data, raw_data, PMInAir_2_5);
+    ACP1_PARSE_DATA_U16(measure_data, raw_data, PMInAir_10);
+    ACP1_PARSE_DATA_U16(measure_data, raw_data, NoParticles_0_3);
+    ACP1_PARSE_DATA_U16(measure_data, raw_data, NoParticles_0_5);
+    ACP1_PARSE_DATA_U16(measure_data, raw_data, NoParticles_1_0);
+    ACP1_PARSE_DATA_U16(measure_data, raw_data, NoParticles_2_5);
+    ACP1_PARSE_DATA_U16(measure_data, raw_data, NoParticles_5_0);
+    ACP1_PARSE_DATA_U16(measure_data, raw_data, NoParticles_10);
+    ACP1_PARSE_DATA_U16(measure_data, raw_data, TVOC);
+    ACP1_PARSE_DATA_U16(measure_data, raw_data, ECO2);
+    ACP1_PARSE_DATA_U16(measure_data, raw_data, T_comp);
+    ACP1_PARSE_DATA_U16(measure_data, raw_data, RH_comp);
+    ACP1_PARSE_DATA_U16(measure_data, raw_data, T_raw);
+    ACP1_PARSE_DATA_U16(measure_data, raw_data, RH_raw);
+    ACP1_PARSE_DATA_U32(measure_data, raw_data, RS0);
+    ACP1_PARSE_DATA_U32(measure_data, raw_data, RS1);
+    ACP1_PARSE_DATA_U32(measure_data, raw_data, RS2);
+    ACP1_PARSE_DATA_U32(measure_data, raw_data, RS3);
+    ACP1_PARSE_DATA_U8( measure_data, raw_data, AQI);
+    ACP1_PARSE_DATA_U8( measure_data, raw_data, FW_Version);
+    ACP1_PARSE_DATA_U8( measure_data, raw_data, ErrorCode);
+
+#if (APC1_LOG_ENABLE != 0)
+    // Logging measurement data
+    ESP_LOGI(TAG, "Measurement data:");
+    ESP_LOGI(TAG, "PM1.0: %d", measure_data.PM_1_0);
+    ESP_LOGI(TAG, "PM2.5: %d", measure_data.PM_2_5);
+    ESP_LOGI(TAG, "PM10: %d", measure_data.PM_10);
+    ESP_LOGI(TAG, "PM1.0 in air: %d", measure_data.PMInAir_1_0);
+    ESP_LOGI(TAG, "PM2.5 in air: %d", measure_data.PMInAir_2_5);
+    ESP_LOGI(TAG, "PM10 in air: %d", measure_data.PMInAir_10);
+    ESP_LOGI(TAG, "Number of particles > 0.3um: %d", measure_data.NoParticles_0_3);
+    ESP_LOGI(TAG, "Number of particles > 0.5um: %d", measure_data.NoParticles_0_5);
+    ESP_LOGI(TAG, "Number of particles > 1.0um: %d", measure_data.NoParticles_1_0);
+    ESP_LOGI(TAG, "Number of particles > 2.5um: %d", measure_data.NoParticles_2_5);
+    ESP_LOGI(TAG, "Number of particles > 5.0um: %d", measure_data.NoParticles_5_0);
+    ESP_LOGI(TAG, "Number of particles > 10um: %d", measure_data.NoParticles_10);
+    ESP_LOGI(TAG, "TVOC: %d", measure_data.TVOC);
+    ESP_LOGI(TAG, "ECO2: %d", measure_data.ECO2);
+    ESP_LOGI(TAG, "Compensated temperature: %d", measure_data.T_comp);
+    ESP_LOGI(TAG, "Compensated humidity: %d", measure_data.RH_comp);
+    ESP_LOGI(TAG, "Uncompensated temperature: %d", measure_data.T_raw);
+    ESP_LOGI(TAG, "Uncompensated humidity: %d", measure_data.RH_raw);
+    ESP_LOGI(TAG, "Gas sensor 0 raw resistance: %ld", measure_data.RS0);
+    ESP_LOGI(TAG, "Gas sensor 1 raw resistance: %ld", measure_data.RS1);
+    ESP_LOGI(TAG, "Gas sensor 2 raw resistance: %ld", measure_data.RS2);
+    ESP_LOGI(TAG, "Gas sensor 3 raw resistance: %ld", measure_data.RS3);
+    ESP_LOGI(TAG, "Air Quality Index: %d", measure_data.AQI);
+    ESP_LOGI(TAG, "Firmware version: %d", measure_data.FW_Version);
+    ESP_LOGI(TAG, "Error code: %d", measure_data.ErrorCode);
+#endif /* End of (APC1_LOG_ENABLE != 0) */
+
+    return measure_data;
 }
 
 #if (ACP_SUPPORT_SET_PIN != 0) || (ACP_SUPPORT_RESET_PIN != 0)
@@ -210,80 +284,45 @@ int apc1_measurement()
     }
 #endif
 
-    if (__apc1_request(Command_Set_Mode, Mode_Measurement) != ESP_OK)
-    {
-        ESP_LOGE(TAG, "Write measurement request fail");
-        return ESP_FAIL;
-    }
-
     uint8_t response[Set_Measurement_Mode_Response_Lenght];
-    if (__apc1_response(Response_Measurement_Register, response, sizeof(response)) != ESP_OK)
+    if (__apc1_response(0, response, sizeof(response)) != ESP_OK)
     {
         ESP_LOGE(TAG, "Read measurement response fail");
         return ESP_FAIL;
     }
 
     /* Parse measurement data response */
-    apc1_measure_data_t measure_data;
-    ACP1_PARSE_DATA_U16(measure_data, response, PM_1_0);
-    ACP1_PARSE_DATA_U16(measure_data, response, PM_2_5);
-    ACP1_PARSE_DATA_U16(measure_data, response, PM_10);
-    ACP1_PARSE_DATA_U16(measure_data, response, PMInAir_1_0);
-    ACP1_PARSE_DATA_U16(measure_data, response, PMInAir_2_5);
-    ACP1_PARSE_DATA_U16(measure_data, response, PMInAir_10);
-    ACP1_PARSE_DATA_U16(measure_data, response, NoParticles_0_3);
-    ACP1_PARSE_DATA_U16(measure_data, response, NoParticles_0_5);
-    ACP1_PARSE_DATA_U16(measure_data, response, NoParticles_1_0);
-    ACP1_PARSE_DATA_U16(measure_data, response, NoParticles_2_5);
-    ACP1_PARSE_DATA_U16(measure_data, response, NoParticles_5_0);
-    ACP1_PARSE_DATA_U16(measure_data, response, NoParticles_10);
-    ACP1_PARSE_DATA_U16(measure_data, response, TVOC);
-    ACP1_PARSE_DATA_U16(measure_data, response, ECO2);
-    ACP1_PARSE_DATA_U16(measure_data, response, T_comp);
-    ACP1_PARSE_DATA_U16(measure_data, response, RH_comp);
-    ACP1_PARSE_DATA_U16(measure_data, response, T_raw);
-    ACP1_PARSE_DATA_U16(measure_data, response, RH_raw);
-    ACP1_PARSE_DATA_U32(measure_data, response, RS0);
-    ACP1_PARSE_DATA_U32(measure_data, response, RS1);
-    ACP1_PARSE_DATA_U32(measure_data, response, RS2);
-    ACP1_PARSE_DATA_U32(measure_data, response, RS3);
-    ACP1_PARSE_DATA_U8( measure_data, response, AQI);
-    ACP1_PARSE_DATA_U8( measure_data, response, FW_Version);
-    ACP1_PARSE_DATA_U8( measure_data, response, ErrorCode);
+    _apc1_measure_data = __apc1_parse_measurement_data(response);
 
-    _apc1_measure_data = measure_data;
+    return ESP_OK;
+}
 
+int apc1_set_measurement_mode()
+{
+#if (ACP_SUPPORT_SET_PIN != 0)
+    if (gpio_get_level(APC1_SET_IO) == 0)
+    {
+        ESP_LOGE(TAG, "Sensor is being deep sleep mode");
+        return ESP_ERR_INVALID_STATE;
+    }
+#endif
+
+    if (__apc1_request(Command_Set_Mode, Mode_Measurement) != ESP_OK)
+    {
+        ESP_LOGE(TAG, "Write measurement mode request fail");
+        return ESP_FAIL;
+    }
+
+    uint8_t response[Set_Measurement_Mode_Response_Lenght];
+    if (__apc1_response(Response_Measurement_Register, response, sizeof(response)) != ESP_OK)
+    {
+        ESP_LOGE(TAG, "Read measurement mode response fail");
+        return ESP_FAIL;
+    }
+
+    /* Parse measurement data response */
+    _apc1_measure_data = __apc1_parse_measurement_data(response);
     _apc1_mode = Mode_Measurement;
-
-#if (APC1_LOG_ENABLE != 0)
-    // Logging measurement data
-    ESP_LOGI(TAG, "Measurement data:");
-    ESP_LOGI(TAG, "PM1.0: %d", measure_data.PM_1_0);
-    ESP_LOGI(TAG, "PM2.5: %d", measure_data.PM_2_5);
-    ESP_LOGI(TAG, "PM10: %d", measure_data.PM_10);
-    ESP_LOGI(TAG, "PM1.0 in air: %d", measure_data.PMInAir_1_0);
-    ESP_LOGI(TAG, "PM2.5 in air: %d", measure_data.PMInAir_2_5);
-    ESP_LOGI(TAG, "PM10 in air: %d", measure_data.PMInAir_10);
-    ESP_LOGI(TAG, "Number of particles > 0.3um: %d", measure_data.NoParticles_0_3);
-    ESP_LOGI(TAG, "Number of particles > 0.5um: %d", measure_data.NoParticles_0_5);
-    ESP_LOGI(TAG, "Number of particles > 1.0um: %d", measure_data.NoParticles_1_0);
-    ESP_LOGI(TAG, "Number of particles > 2.5um: %d", measure_data.NoParticles_2_5);
-    ESP_LOGI(TAG, "Number of particles > 5.0um: %d", measure_data.NoParticles_5_0);
-    ESP_LOGI(TAG, "Number of particles > 10um: %d", measure_data.NoParticles_10);
-    ESP_LOGI(TAG, "TVOC: %d", measure_data.TVOC);
-    ESP_LOGI(TAG, "ECO2: %d", measure_data.ECO2);
-    ESP_LOGI(TAG, "Compensated temperature: %d", measure_data.T_comp);
-    ESP_LOGI(TAG, "Compensated humidity: %d", measure_data.RH_comp);
-    ESP_LOGI(TAG, "Uncompensated temperature: %d", measure_data.T_raw);
-    ESP_LOGI(TAG, "Uncompensated humidity: %d", measure_data.RH_raw);
-    ESP_LOGI(TAG, "Gas sensor 0 raw resistance: %ld", measure_data.RS0);
-    ESP_LOGI(TAG, "Gas sensor 1 raw resistance: %ld", measure_data.RS1);
-    ESP_LOGI(TAG, "Gas sensor 2 raw resistance: %ld", measure_data.RS2);
-    ESP_LOGI(TAG, "Gas sensor 3 raw resistance: %ld", measure_data.RS3);
-    ESP_LOGI(TAG, "Air Quality Index: %d", measure_data.AQI);
-    ESP_LOGI(TAG, "Firmware version: %d", measure_data.FW_Version);
-    ESP_LOGI(TAG, "Error code: %d", measure_data.ErrorCode);
-#endif /* End of (APC1_LOG_ENABLE != 0) */
 
     return ESP_OK;
 }

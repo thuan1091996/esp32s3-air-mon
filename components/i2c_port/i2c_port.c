@@ -60,6 +60,40 @@ void* i2c_port_init(int i2c_port_num, int sda_io_num, int scl_io_num, uint8_t i2
 }
 
 /**
+ * @brief Read continue the I2C device
+ */
+int i2c_port_read(void* handle, uint8_t *data, size_t size)
+{
+    ESP_LOGD(TAG, "i2c_port_read");
+
+    if (!handle || !data || size == 0)
+    {
+        ESP_LOGE(TAG, "Invalid arguments");
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    i2c_port_internal_t* i2c_port = (i2c_port_internal_t*)handle;
+    i2c_cmd_handle_t cmd = i2c_cmd_link_create();
+
+    i2c_master_start(cmd);
+    i2c_master_write_byte(cmd, (i2c_port->device_address << 1) | I2C_MASTER_READ, true);
+    i2c_master_read(cmd, data, size, I2C_MASTER_LAST_NACK);
+    i2c_master_stop(cmd);
+
+    esp_err_t err = i2c_master_cmd_begin(i2c_port->port, cmd, pdMS_TO_TICKS(I2C_MASTER_TIMEOUT_MS));
+    i2c_cmd_link_delete(cmd);
+    if (err != ESP_OK)
+    {
+        ESP_LOGE(TAG, "I2C read failed: %s", esp_err_to_name(err));
+    }
+
+    // Dump the data
+    ESP_LOG_BUFFER_HEX_LEVEL(TAG, data, size, ESP_LOG_DEBUG);
+
+    return err;
+}
+
+/**
  * @brief Read a register from the I2C device
  */
 int i2c_port_register_read(void* handle, uint8_t reg_address, uint8_t* data, size_t size)

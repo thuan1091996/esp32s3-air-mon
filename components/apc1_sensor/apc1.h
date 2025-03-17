@@ -29,8 +29,10 @@ typedef struct {
 int acp1_init();
 
 int apc1_read_infor();
+
 int apc1_measurement();
 
+int apc1_set_measurement_mode();
 int apc1_set_idle_mode();
 int acp1_set_deep_sleep_mode(int enable);
 
