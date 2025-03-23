@@ -98,6 +98,8 @@ void ui_ScreenIndicatorAQI_screen_init(void)
 
     ui_BarValuePM1 = lv_bar_create(ui_ContainerDataPM1);
     lv_bar_set_range(ui_BarValuePM1, 0, 500);
+    lv_bar_set_value(ui_BarValuePM1, 500, LV_ANIM_OFF);
+    lv_bar_set_start_value(ui_BarValuePM1, 0, LV_ANIM_OFF);
     lv_obj_set_width(ui_BarValuePM1, 128);
     lv_obj_set_height(ui_BarValuePM1, 4);
     lv_obj_set_x(ui_BarValuePM1, 0);
@@ -204,6 +206,8 @@ void ui_ScreenIndicatorAQI_screen_init(void)
 
     ui_BarValuePM25 = lv_bar_create(ui_ContainerDataPM25);
     lv_bar_set_range(ui_BarValuePM25, 0, 1000);
+    lv_bar_set_value(ui_BarValuePM25, 1000, LV_ANIM_OFF);
+    lv_bar_set_start_value(ui_BarValuePM25, 0, LV_ANIM_OFF);
     lv_obj_set_width(ui_BarValuePM25, 128);
     lv_obj_set_height(ui_BarValuePM25, 4);
     lv_obj_set_x(ui_BarValuePM25, 0);
@@ -310,6 +314,8 @@ void ui_ScreenIndicatorAQI_screen_init(void)
 
     ui_BarValuePM10 = lv_bar_create(ui_ContainerDataPM10);
     lv_bar_set_range(ui_BarValuePM10, 0, 1500);
+    lv_bar_set_value(ui_BarValuePM10, 1500, LV_ANIM_OFF);
+    lv_bar_set_start_value(ui_BarValuePM10, 0, LV_ANIM_OFF);
     lv_obj_set_width(ui_BarValuePM10, 128);
     lv_obj_set_height(ui_BarValuePM10, 4);
     lv_obj_set_x(ui_BarValuePM10, 0);
@@ -416,7 +422,7 @@ void ui_ScreenIndicatorAQI_screen_init(void)
 
     ui_BarValueCO2 = lv_bar_create(ui_ContainerDataCO2);
     lv_bar_set_range(ui_BarValueCO2, 400, 65000);
-    lv_bar_set_value(ui_BarValueCO2, 400, LV_ANIM_OFF);
+    lv_bar_set_value(ui_BarValueCO2, 65000, LV_ANIM_OFF);
     lv_bar_set_start_value(ui_BarValueCO2, 0, LV_ANIM_OFF);
     lv_obj_set_width(ui_BarValueCO2, 128);
     lv_obj_set_height(ui_BarValueCO2, 4);
@@ -746,6 +752,8 @@ void ui_ScreenIndicatorAQI_screen_init(void)
 
     ui_BarValueTEMP = lv_bar_create(ui_ContainerDataTEMP);
     lv_bar_set_range(ui_BarValueTEMP, 0, 50);
+    lv_bar_set_value(ui_BarValueTEMP, 50, LV_ANIM_OFF);
+    lv_bar_set_start_value(ui_BarValueTEMP, 0, LV_ANIM_OFF);
     lv_obj_set_width(ui_BarValueTEMP, 128);
     lv_obj_set_height(ui_BarValueTEMP, 4);
     lv_obj_set_x(ui_BarValueTEMP, 0);
@@ -851,6 +859,8 @@ void ui_ScreenIndicatorAQI_screen_init(void)
     lv_obj_set_style_text_font(ui_LabelUnitRH, &ui_font_Poppins_Light_18, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_BarValueRH = lv_bar_create(ui_ContainerDataRH);
+    lv_bar_set_value(ui_BarValueRH, 100, LV_ANIM_OFF);
+    lv_bar_set_start_value(ui_BarValueRH, 0, LV_ANIM_OFF);
     lv_obj_set_width(ui_BarValueRH, 128);
     lv_obj_set_height(ui_BarValueRH, 4);
     lv_obj_set_x(ui_BarValueRH, 0);
@@ -957,6 +967,8 @@ void ui_ScreenIndicatorAQI_screen_init(void)
 
     ui_BarValueTVOC = lv_bar_create(ui_ContainerDataTVOC);
     lv_bar_set_range(ui_BarValueTVOC, 0, 65000);
+    lv_bar_set_value(ui_BarValueTVOC, 65000, LV_ANIM_OFF);
+    lv_bar_set_start_value(ui_BarValueTVOC, 0, LV_ANIM_OFF);
     lv_obj_set_width(ui_BarValueTVOC, 128);
     lv_obj_set_height(ui_BarValueTVOC, 4);
     lv_obj_set_x(ui_BarValueTVOC, 0);
@@ -1030,26 +1042,6 @@ void ui_ScreenIndicatorAQI_screen_init(void)
     lv_obj_add_flag(ui_ImageIconSetting, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
     lv_obj_clear_flag(ui_ImageIconSetting, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
-    lv_obj_add_event_cb(ui_ContainerCoverPM1, ui_event_ContainerCoverPM1, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_PanelPM1, ui_event_PanelPM1, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_ContainerLinePM1, ui_event_ContainerLinePM1, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_ContainerCoverPM25, ui_event_ContainerCoverPM25, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_PanelPM25, ui_event_PanelPM25, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_ContainerLinePM25, ui_event_ContainerLinePM25, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_ContainerCoverPM10, ui_event_ContainerCoverPM10, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_PanelPM10, ui_event_PanelPM10, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_ContainerLinePM10, ui_event_ContainerLinePM10, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_ContainerCoverCO2, ui_event_ContainerCoverCO2, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_PanelCO2, ui_event_PanelCO2, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_ContainerCoverTEMP, ui_event_ContainerCoverTEMP, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_PanelTEMP, ui_event_PanelTEMP, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_ContainerLineTEMP, ui_event_ContainerLineTEMP, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_ContainerCoverRH, ui_event_ContainerCoverRH, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_PanelRH, ui_event_PanelRH, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_ContainerLineRH, ui_event_ContainerLineRH, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_ContainerCoverTVOC, ui_event_ContainerCoverTVOC, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_PanelTVOC, ui_event_PanelTVOC, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_ContainerLineTVOC, ui_event_ContainerLineTVOC, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_ContainerCoverSetting, ui_event_ContainerCoverSetting, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_PanelSetting, ui_event_PanelSetting, LV_EVENT_ALL, NULL);
 

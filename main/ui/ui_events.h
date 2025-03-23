@@ -10,13 +10,6 @@
 extern "C" {
 #endif
 
-void aqi_indicator_pm1_click_event(lv_event_t * e);
-void aqi_indicator_pm2_5_click_event(lv_event_t * e);
-void aqi_indicator_pm10_click_event(lv_event_t * e);
-void aqi_indicator_co2_click_event(lv_event_t * e);
-void aqi_indicator_temp_click_event(lv_event_t * e);
-void aqi_indicator_rh_click_event(lv_event_t * e);
-void aqi_indicator_tvoc_click_event(lv_event_t * e);
 void aqi_indicator_setting_click_event(lv_event_t * e);
 
 #ifdef __cplusplus

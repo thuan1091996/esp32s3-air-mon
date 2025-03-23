@@ -38,9 +38,7 @@ lv_obj_t * ui_LabelLoading;
 void ui_ScreenIndicatorAQI_screen_init(void);
 lv_obj_t * ui_ScreenIndicatorAQI;
 lv_obj_t * ui_ContainerRegionLeft;
-void ui_event_ContainerCoverPM1(lv_event_t * e);
 lv_obj_t * ui_ContainerCoverPM1;
-void ui_event_PanelPM1(lv_event_t * e);
 lv_obj_t * ui_PanelPM1;
 lv_obj_t * ui_ContainerPM1;
 lv_obj_t * ui_ImageIconPM1;
@@ -50,11 +48,8 @@ lv_obj_t * ui_LabelValuePM1;
 lv_obj_t * ui_LabelUnitPM1;
 lv_obj_t * ui_BarValuePM1;
 lv_obj_t * ui_LabelNamePM1;
-void ui_event_ContainerLinePM1(lv_event_t * e);
 lv_obj_t * ui_ContainerLinePM1;
-void ui_event_ContainerCoverPM25(lv_event_t * e);
 lv_obj_t * ui_ContainerCoverPM25;
-void ui_event_PanelPM25(lv_event_t * e);
 lv_obj_t * ui_PanelPM25;
 lv_obj_t * ui_ContainerPM25;
 lv_obj_t * ui_ImageIconPM25;
@@ -64,11 +59,8 @@ lv_obj_t * ui_LabelValuePM25;
 lv_obj_t * ui_LabelUnitPM25;
 lv_obj_t * ui_BarValuePM25;
 lv_obj_t * ui_LabelNamePM25;
-void ui_event_ContainerLinePM25(lv_event_t * e);
 lv_obj_t * ui_ContainerLinePM25;
-void ui_event_ContainerCoverPM10(lv_event_t * e);
 lv_obj_t * ui_ContainerCoverPM10;
-void ui_event_PanelPM10(lv_event_t * e);
 lv_obj_t * ui_PanelPM10;
 lv_obj_t * ui_ContainerPM10;
 lv_obj_t * ui_ImageIconPM10;
@@ -78,11 +70,8 @@ lv_obj_t * ui_LabelValuePM10;
 lv_obj_t * ui_LabelUnitPM10;
 lv_obj_t * ui_BarValuePM10;
 lv_obj_t * ui_LabelNamePM10;
-void ui_event_ContainerLinePM10(lv_event_t * e);
 lv_obj_t * ui_ContainerLinePM10;
-void ui_event_ContainerCoverCO2(lv_event_t * e);
 lv_obj_t * ui_ContainerCoverCO2;
-void ui_event_PanelCO2(lv_event_t * e);
 lv_obj_t * ui_PanelCO2;
 lv_obj_t * ui_ContainerCO2;
 lv_obj_t * ui_ImageIconCO2;
@@ -117,9 +106,7 @@ lv_obj_t * ui_ContainerNameSelectAQI;
 lv_obj_t * ui_LabelNameSelectAQI;
 lv_obj_t * ui_PanelLineCenterRight;
 lv_obj_t * ui_ContainerRegionRight;
-void ui_event_ContainerCoverTEMP(lv_event_t * e);
 lv_obj_t * ui_ContainerCoverTEMP;
-void ui_event_PanelTEMP(lv_event_t * e);
 lv_obj_t * ui_PanelTEMP;
 lv_obj_t * ui_ContainerTEMP;
 lv_obj_t * ui_ImageIconTEMP;
@@ -129,11 +116,8 @@ lv_obj_t * ui_LabelValueTEMP;
 lv_obj_t * ui_LabelUnitTEMP;
 lv_obj_t * ui_BarValueTEMP;
 lv_obj_t * ui_LabelNameTEMP;
-void ui_event_ContainerLineTEMP(lv_event_t * e);
 lv_obj_t * ui_ContainerLineTEMP;
-void ui_event_ContainerCoverRH(lv_event_t * e);
 lv_obj_t * ui_ContainerCoverRH;
-void ui_event_PanelRH(lv_event_t * e);
 lv_obj_t * ui_PanelRH;
 lv_obj_t * ui_ContainerRH;
 lv_obj_t * ui_ImageIconRH;
@@ -143,11 +127,8 @@ lv_obj_t * ui_LabelValueRH;
 lv_obj_t * ui_LabelUnitRH;
 lv_obj_t * ui_BarValueRH;
 lv_obj_t * ui_LabelNameRH;
-void ui_event_ContainerLineRH(lv_event_t * e);
 lv_obj_t * ui_ContainerLineRH;
-void ui_event_ContainerCoverTVOC(lv_event_t * e);
 lv_obj_t * ui_ContainerCoverTVOC;
-void ui_event_PanelTVOC(lv_event_t * e);
 lv_obj_t * ui_PanelTVOC;
 lv_obj_t * ui_ContainerTVOC;
 lv_obj_t * ui_ImageIconTVOC;
@@ -157,7 +138,6 @@ lv_obj_t * ui_LabelValueTVOC;
 lv_obj_t * ui_LabelUnitTVOC;
 lv_obj_t * ui_BarValueTVOC;
 lv_obj_t * ui_LabelNameTVOC;
-void ui_event_ContainerLineTVOC(lv_event_t * e);
 lv_obj_t * ui_ContainerLineTVOC;
 void ui_event_ContainerCoverSetting(lv_event_t * e);
 lv_obj_t * ui_ContainerCoverSetting;
@@ -192,186 +172,6 @@ void ui_event_ScreenLoadAQI(lv_event_t * e)
 
     if(event_code == LV_EVENT_SCREEN_LOADED) {
         _ui_screen_change(&ui_ScreenIndicatorAQI, LV_SCR_LOAD_ANIM_FADE_ON, 500, 1000, &ui_ScreenIndicatorAQI_screen_init);
-    }
-}
-
-void ui_event_ContainerCoverPM1(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        aqi_indicator_pm1_click_event(e);
-    }
-}
-
-void ui_event_PanelPM1(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        aqi_indicator_pm1_click_event(e);
-    }
-}
-
-void ui_event_ContainerLinePM1(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        aqi_indicator_pm1_click_event(e);
-    }
-}
-
-void ui_event_ContainerCoverPM25(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        aqi_indicator_pm2_5_click_event(e);
-    }
-}
-
-void ui_event_PanelPM25(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        aqi_indicator_pm2_5_click_event(e);
-    }
-}
-
-void ui_event_ContainerLinePM25(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        aqi_indicator_pm2_5_click_event(e);
-    }
-}
-
-void ui_event_ContainerCoverPM10(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        aqi_indicator_pm10_click_event(e);
-    }
-}
-
-void ui_event_PanelPM10(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        aqi_indicator_pm10_click_event(e);
-    }
-}
-
-void ui_event_ContainerLinePM10(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        aqi_indicator_pm10_click_event(e);
-    }
-}
-
-void ui_event_ContainerCoverCO2(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        aqi_indicator_co2_click_event(e);
-    }
-}
-
-void ui_event_PanelCO2(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        aqi_indicator_co2_click_event(e);
-    }
-}
-
-void ui_event_ContainerCoverTEMP(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        aqi_indicator_temp_click_event(e);
-    }
-}
-
-void ui_event_PanelTEMP(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        aqi_indicator_temp_click_event(e);
-    }
-}
-
-void ui_event_ContainerLineTEMP(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        aqi_indicator_temp_click_event(e);
-    }
-}
-
-void ui_event_ContainerCoverRH(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        aqi_indicator_rh_click_event(e);
-    }
-}
-
-void ui_event_PanelRH(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        aqi_indicator_rh_click_event(e);
-    }
-}
-
-void ui_event_ContainerLineRH(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        aqi_indicator_rh_click_event(e);
-    }
-}
-
-void ui_event_ContainerCoverTVOC(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        aqi_indicator_tvoc_click_event(e);
-    }
-}
-
-void ui_event_PanelTVOC(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        aqi_indicator_tvoc_click_event(e);
-    }
-}
-
-void ui_event_ContainerLineTVOC(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        aqi_indicator_tvoc_click_event(e);
     }
 }
 

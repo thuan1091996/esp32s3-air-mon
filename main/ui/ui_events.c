@@ -5,50 +5,7 @@
 
 #include "ui.h"
 
-void aqi_indicator_pm1_click_event(lv_event_t * e)
-{
-	// Your code here
-	aqi_indicator_ui_click_event_handler(ui_ContainerCoverPM1);
-}
-
-void aqi_indicator_pm2_5_click_event(lv_event_t * e)
-{
-	// Your code here
-	aqi_indicator_ui_click_event_handler(ui_ContainerCoverPM25);
-}
-
-void aqi_indicator_pm10_click_event(lv_event_t * e)
-{
-	// Your code here
-	aqi_indicator_ui_click_event_handler(ui_ContainerCoverPM10);
-}
-
-void aqi_indicator_co2_click_event(lv_event_t * e)
-{
-	// Your code here
-	aqi_indicator_ui_click_event_handler(ui_ContainerCoverCO2);
-}
-
-void aqi_indicator_temp_click_event(lv_event_t * e)
-{
-	// Your code here
-	aqi_indicator_ui_click_event_handler(ui_ContainerCoverTEMP);
-}
-
-void aqi_indicator_rh_click_event(lv_event_t * e)
-{
-	// Your code here
-	aqi_indicator_ui_click_event_handler(ui_ContainerCoverRH);
-}
-
-void aqi_indicator_tvoc_click_event(lv_event_t * e)
-{
-	// Your code here
-	aqi_indicator_ui_click_event_handler(ui_ContainerCoverTVOC);
-}
-
 void aqi_indicator_setting_click_event(lv_event_t * e)
 {
 	// Your code here
-	aqi_indicator_ui_click_event_handler(ui_ContainerCoverSetting);
 }
