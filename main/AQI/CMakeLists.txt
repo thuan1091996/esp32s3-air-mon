@@ -1,3 +1,4 @@
-SET(SOURCES aqi_indicator_ui.c aqi_sensor.c)
+
+SET(SOURCES "./*c")
 
 add_library(aqi ${SOURCES})

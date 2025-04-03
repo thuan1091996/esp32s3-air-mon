@@ -15,7 +15,9 @@ extern "C" {
 #include "ui_helpers.h"
 #include "ui_events.h"
 
+#include "aqi_utility.h"
 #include "aqi_indicator_ui.h"
+#include "aqi_setting.h"
 #include "aqi_sensor.h"
 
 // SCREEN: ui_ScreenLoadAQI
@@ -23,23 +25,61 @@ void ui_ScreenLoadAQI_screen_init(void);
 void ui_event_ScreenLoadAQI(lv_event_t * e);
 extern lv_obj_t * ui_ScreenLoadAQI;
 extern lv_obj_t * ui_ContainerLoad;
-extern lv_obj_t * ui_ContainerLoadStatus;
-extern lv_obj_t * ui_ContaierLoadLeftSide;
-extern lv_obj_t * ui_LabelLoadTime;
-extern lv_obj_t * ui_ContainerLoadRightSide;
-extern lv_obj_t * ui_ContainerLoadMobileSignal;
-extern lv_obj_t * ui_ImageLoadMobileSignal;
-extern lv_obj_t * ui_ContainerLoadWifi;
-extern lv_obj_t * ui_ImageLoadWifi;
-extern lv_obj_t * ui_ContainerLoadBattery;
-extern lv_obj_t * ui_ImageLoadBattery;
-extern lv_obj_t * ui_BarLoadBattery;
+extern lv_obj_t * ui_ContainerStatus;
+extern lv_obj_t * ui_ContaierStatusLeft;
+extern lv_obj_t * ui_LabelTime;
+extern lv_obj_t * ui_ContainerStatusRight;
+extern lv_obj_t * ui_ContainerMobileSignal;
+extern lv_obj_t * ui_ImageMobileSignal;
+extern lv_obj_t * ui_ContainerWifi;
+extern lv_obj_t * ui_ImageWifi;
+extern lv_obj_t * ui_ContainerBattery;
+extern lv_obj_t * ui_ImageBattery;
+extern lv_obj_t * ui_BarBattery;
 extern lv_obj_t * ui_ContainerLoadMain;
 extern lv_obj_t * ui_SpinnerLoadProgress;
 extern lv_obj_t * ui_ContainerLoading;
 extern lv_obj_t * ui_ContainerLoadName;
 extern lv_obj_t * ui_ImageLoadName;
 extern lv_obj_t * ui_LabelLoading;
+// CUSTOM VARIABLES
+
+// SCREEN: ui_ScreenSettingAQI
+void ui_ScreenSettingAQI_screen_init(void);
+extern lv_obj_t * ui_ScreenSettingAQI;
+extern lv_obj_t * ui_ContainerSetting;
+extern lv_obj_t * ui_ContainerSettingMain;
+extern lv_obj_t * ui_ContainerSettingTitle;
+extern lv_obj_t * ui_ContainerSettingTitleIcon;
+extern lv_obj_t * ui_ImageSettingTitleIcon;
+extern lv_obj_t * ui_LabelSettingTitleName;
+extern lv_obj_t * ui_ContainerSettingButton;
+extern lv_obj_t * ui_ButtonSettingBack;
+extern lv_obj_t * ui_LabelSettingBackButton;
+extern lv_obj_t * ui_ButtonSettingNext;
+extern lv_obj_t * ui_LabelSettingNextButton;
+extern lv_obj_t * ui_ContainerSettingStage;
+extern lv_obj_t * ui_ImageSettingStageLanguage;
+extern lv_obj_t * ui_ImageSettingStageCountry;
+extern lv_obj_t * ui_ImageSettingStageWifi;
+extern lv_obj_t * ui_ContainerSettingWifi;
+extern lv_obj_t * ui_ContainerSettingWifiEnable;
+extern lv_obj_t * ui_ContainerSettingWifiEnableIcon;
+extern lv_obj_t * ui_ImageSettingWifiEnableIcon;
+extern lv_obj_t * ui_LabelSettingWifiEnable;
+extern lv_obj_t * ui_SwitchSettingWifiEnable;
+extern lv_obj_t * ui_ContainerWifiPassword;
+extern lv_obj_t * ui_ContainerWifiSelect;
+extern lv_obj_t * ui_ContainerWifiSelectIcon;
+extern lv_obj_t * ui_ImageWifiSelectIcon;
+extern lv_obj_t * ui_LabelWifiSelectName;
+extern lv_obj_t * ui_ImageWifiSelectExit;
+extern lv_obj_t * ui_ContainerWifiPasswordType;
+extern lv_obj_t * ui_ImageWifiPasswordLock;
+extern lv_obj_t * ui_TextWifiPasswordType;
+extern lv_obj_t * ui_ButtonWifiConnect;
+extern lv_obj_t * ui_LabelWifiConnectButton;
+extern lv_obj_t * ui_KeyboardWifiPassword;
 // CUSTOM VARIABLES
 
 // SCREEN: ui_ScreenIndicatorAQI
@@ -90,18 +130,7 @@ extern lv_obj_t * ui_LabelUnitCO2;
 extern lv_obj_t * ui_BarValueCO2;
 extern lv_obj_t * ui_LabelNameCO2;
 extern lv_obj_t * ui_PanelLineCenterLeft;
-extern lv_obj_t * ui_ContainerRegionCenter;
-extern lv_obj_t * ui_ContainerStatus;
-extern lv_obj_t * ui_ContaierLeftSide;
-extern lv_obj_t * ui_LabelTime;
-extern lv_obj_t * ui_ContainerRightSide;
-extern lv_obj_t * ui_ContainerMobileSignal;
-extern lv_obj_t * ui_ImageMobileSignal;
-extern lv_obj_t * ui_ContainerWifi;
-extern lv_obj_t * ui_ImageWifi;
-extern lv_obj_t * ui_ContainerBattery;
-extern lv_obj_t * ui_ImageBattery;
-extern lv_obj_t * ui_BarBattery;
+extern lv_obj_t * ui_ContainerIndicator;
 extern lv_obj_t * ui_ContainerMain;
 extern lv_obj_t * ui_ContainerSelectAQI;
 extern lv_obj_t * ui_LabelValueSelectAQI;
@@ -151,8 +180,8 @@ void ui_event_ContainerCoverSetting(lv_event_t * e);
 extern lv_obj_t * ui_ContainerCoverSetting;
 void ui_event_PanelSetting(lv_event_t * e);
 extern lv_obj_t * ui_PanelSetting;
-extern lv_obj_t * ui_ContainerSetting;
-extern lv_obj_t * ui_ImageIconSetting;
+extern lv_obj_t * ui_ContainerSettingIcon;
+extern lv_obj_t * ui_ImageSettingIcon;
 // CUSTOM VARIABLES
 
 // EVENTS
@@ -165,6 +194,11 @@ LV_IMG_DECLARE(ui_img_images_wifi3_png);    // assets/Images/Wifi3.png
 LV_IMG_DECLARE(ui_img_images_batteryoutline_png);    // assets/Images/BatteryOutline.png
 LV_IMG_DECLARE(ui_img_images_line_png);    // assets/Images/Line.png
 LV_IMG_DECLARE(ui_img_images_load_png);    // assets/Images/load.png
+LV_IMG_DECLARE(ui_img_images_wifi_44_png);    // assets/Images/Wifi_44.png
+LV_IMG_DECLARE(ui_img_images_stage_grey_png);    // assets/Images/stage_grey.png
+LV_IMG_DECLARE(ui_img_images_wifi_24_blue_png);    // assets/Images/wifi_24_blue.png
+LV_IMG_DECLARE(ui_img_images_exit_white_png);    // assets/Images/exit_white.png
+LV_IMG_DECLARE(ui_img_images_wifi_lock_20_white_png);    // assets/Images/wifi_lock_20_white.png
 LV_IMG_DECLARE(ui_img_images_pm_white_png);    // assets/Images/PM_White.png
 LV_IMG_DECLARE(ui_img_images_co2_white_png);    // assets/Images/CO2_White.png
 LV_IMG_DECLARE(ui_img_images_temp_white_png);    // assets/Images/TEMP_White.png
@@ -180,14 +214,18 @@ LV_IMG_DECLARE(ui_img_images_pm_red_png);    // assets/Images/PM_Red.png
 LV_IMG_DECLARE(ui_img_images_rh_green_png);    // assets/Images/RH_Green.png
 LV_IMG_DECLARE(ui_img_images_rh_orange_png);    // assets/Images/RH_Orange.png
 LV_IMG_DECLARE(ui_img_images_rh_red_png);    // assets/Images/RH_Red.png
+LV_IMG_DECLARE(ui_img_images_stage_green_png);    // assets/Images/stage_green.png
 LV_IMG_DECLARE(ui_img_images_temp_green_png);    // assets/Images/TEMP_Green.png
 LV_IMG_DECLARE(ui_img_images_temp_orange_png);    // assets/Images/TEMP_Orange.png
 LV_IMG_DECLARE(ui_img_images_temp_red_png);    // assets/Images/TEMP_Red.png
+LV_IMG_DECLARE(ui_img_images_tick_green_png);    // assets/Images/tick_green.png
 LV_IMG_DECLARE(ui_img_images_tvoc_green_png);    // assets/Images/TVOC_Green.png
 LV_IMG_DECLARE(ui_img_images_tvoc_orange_png);    // assets/Images/TVOC_Orange.png
 LV_IMG_DECLARE(ui_img_images_tvoc_red_png);    // assets/Images/TVOC_Red.png
 LV_IMG_DECLARE(ui_img_images_wifi1_png);    // assets/Images/Wifi1.png
 LV_IMG_DECLARE(ui_img_images_wifi2_png);    // assets/Images/Wifi2.png
+LV_IMG_DECLARE(ui_img_images_wifi_24_white_png);    // assets/Images/wifi_24_white.png
+LV_IMG_DECLARE(ui_img_images_wifi_lock_20_grey_png);    // assets/Images/wifi_lock_20_grey.png
 
 // FONTS
 LV_FONT_DECLARE(ui_font_OpenSans_Regular_14);
@@ -196,6 +234,9 @@ LV_FONT_DECLARE(ui_font_Poppins_ExtraLight_116);
 LV_FONT_DECLARE(ui_font_Poppins_Light_18);
 LV_FONT_DECLARE(ui_font_Poppins_Light_20);
 LV_FONT_DECLARE(ui_font_Poppins_Light_24);
+LV_FONT_DECLARE(ui_font_Poppins_Light_36);
+LV_FONT_DECLARE(ui_font_Poppins_Regular_16);
+LV_FONT_DECLARE(ui_font_Poppins_Regular_18);
 
 // UI INIT
 void ui_init(void);

@@ -24,6 +24,8 @@ static aqi_indicator_attribute_t _attribute_list[] = {
     ATTRIBUTE_INIT(TVOC)
 };
 
+static const char *TAG = "AQI INDICATOR";
+
 static aqi_controller_t _aqi_controller = {0};
 
 static void __update_value(aqi_indicator_t *self, uint16_t new_value)
@@ -96,13 +98,22 @@ static void __aqi_indicator_ui_event_handler(lv_event_t *event)
     {
         aqi_indicator_t *new_selection = (aqi_indicator_t*)lv_event_get_user_data(event);
 
-        ESP_LOGI("AQI", "Click event on %s", new_selection->attribute->data.name);
+        ESP_LOGI(TAG, "Click event on %s", new_selection->attribute->data.name);
 
         if (new_selection && new_selection != _aqi_controller.selection)
         {
             _aqi_controller.selection->select(_aqi_controller.selection, 0);
             _aqi_controller.selection = new_selection;
             _aqi_controller.selection->select(_aqi_controller.selection, 1);
+        }
+    }
+    else if (lv_event_get_target(event) == ui_ScreenIndicatorAQI)
+    {
+        if(lv_event_get_code(event) == LV_EVENT_SCREEN_LOADED)
+        {
+            ESP_LOGI(TAG, "Indicator screen loaded event triggered");
+            lv_obj_set_parent(ui_ContainerStatus, ui_ContainerIndicator);
+            lv_obj_set_size(ui_ContainerStatus, 374, 47);
         }
     }
 }
@@ -129,7 +140,7 @@ void aqi_indicator_ui_init()
 
     if (attribute_num > AQI_INDICATOR_NUM)
     {
-        ESP_LOGE("AQI", "Attribute number is greater than the indicator number");
+        ESP_LOGE(TAG, "Attribute number is greater than the indicator number");
         return;
     }
 
@@ -140,13 +151,15 @@ void aqi_indicator_ui_init()
     {
         _aqi_controller.indicator[i] = create_aqi_indicator(&_attribute_list[i]);
         lv_obj_add_event_cb(*_aqi_controller.indicator[i]->attribute->ui.click_container_cover,
-                            __aqi_indicator_ui_event_handler, LV_EVENT_ALL, _aqi_controller.indicator[i]);
+                            __aqi_indicator_ui_event_handler, LV_EVENT_CLICKED, _aqi_controller.indicator[i]);
         lv_obj_add_event_cb(*_aqi_controller.indicator[i]->attribute->ui.click_panel,
-                            __aqi_indicator_ui_event_handler, LV_EVENT_ALL, _aqi_controller.indicator[i]);
+                            __aqi_indicator_ui_event_handler, LV_EVENT_CLICKED, _aqi_controller.indicator[i]);
     }
 
     _aqi_controller.selection = _aqi_controller.indicator[0];
     _aqi_controller.selection->select(_aqi_controller.selection, 1);
+
+    lv_obj_add_event_cb(ui_ScreenIndicatorAQI, &__aqi_indicator_ui_event_handler, LV_EVENT_SCREEN_LOADED, NULL);
 }
 
 void aqi_indicator_ui_data_show(uint16_t pm1, uint16_t pm25, uint16_t pm10, uint16_t co2, uint16_t temp, uint16_t humi, uint16_t tvoc)

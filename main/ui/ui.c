@@ -14,23 +14,62 @@ void ui_ScreenLoadAQI_screen_init(void);
 void ui_event_ScreenLoadAQI(lv_event_t * e);
 lv_obj_t * ui_ScreenLoadAQI;
 lv_obj_t * ui_ContainerLoad;
-lv_obj_t * ui_ContainerLoadStatus;
-lv_obj_t * ui_ContaierLoadLeftSide;
-lv_obj_t * ui_LabelLoadTime;
-lv_obj_t * ui_ContainerLoadRightSide;
-lv_obj_t * ui_ContainerLoadMobileSignal;
-lv_obj_t * ui_ImageLoadMobileSignal;
-lv_obj_t * ui_ContainerLoadWifi;
-lv_obj_t * ui_ImageLoadWifi;
-lv_obj_t * ui_ContainerLoadBattery;
-lv_obj_t * ui_ImageLoadBattery;
-lv_obj_t * ui_BarLoadBattery;
+lv_obj_t * ui_ContainerStatus;
+lv_obj_t * ui_ContaierStatusLeft;
+lv_obj_t * ui_LabelTime;
+lv_obj_t * ui_ContainerStatusRight;
+lv_obj_t * ui_ContainerMobileSignal;
+lv_obj_t * ui_ImageMobileSignal;
+lv_obj_t * ui_ContainerWifi;
+lv_obj_t * ui_ImageWifi;
+lv_obj_t * ui_ContainerBattery;
+lv_obj_t * ui_ImageBattery;
+lv_obj_t * ui_BarBattery;
 lv_obj_t * ui_ContainerLoadMain;
 lv_obj_t * ui_SpinnerLoadProgress;
 lv_obj_t * ui_ContainerLoading;
 lv_obj_t * ui_ContainerLoadName;
 lv_obj_t * ui_ImageLoadName;
 lv_obj_t * ui_LabelLoading;
+// CUSTOM VARIABLES
+
+
+// SCREEN: ui_ScreenSettingAQI
+void ui_ScreenSettingAQI_screen_init(void);
+lv_obj_t * ui_ScreenSettingAQI;
+lv_obj_t * ui_ContainerSetting;
+lv_obj_t * ui_ContainerSettingMain;
+lv_obj_t * ui_ContainerSettingTitle;
+lv_obj_t * ui_ContainerSettingTitleIcon;
+lv_obj_t * ui_ImageSettingTitleIcon;
+lv_obj_t * ui_LabelSettingTitleName;
+lv_obj_t * ui_ContainerSettingButton;
+lv_obj_t * ui_ButtonSettingBack;
+lv_obj_t * ui_LabelSettingBackButton;
+lv_obj_t * ui_ButtonSettingNext;
+lv_obj_t * ui_LabelSettingNextButton;
+lv_obj_t * ui_ContainerSettingStage;
+lv_obj_t * ui_ImageSettingStageLanguage;
+lv_obj_t * ui_ImageSettingStageCountry;
+lv_obj_t * ui_ImageSettingStageWifi;
+lv_obj_t * ui_ContainerSettingWifi;
+lv_obj_t * ui_ContainerSettingWifiEnable;
+lv_obj_t * ui_ContainerSettingWifiEnableIcon;
+lv_obj_t * ui_ImageSettingWifiEnableIcon;
+lv_obj_t * ui_LabelSettingWifiEnable;
+lv_obj_t * ui_SwitchSettingWifiEnable;
+lv_obj_t * ui_ContainerWifiPassword;
+lv_obj_t * ui_ContainerWifiSelect;
+lv_obj_t * ui_ContainerWifiSelectIcon;
+lv_obj_t * ui_ImageWifiSelectIcon;
+lv_obj_t * ui_LabelWifiSelectName;
+lv_obj_t * ui_ImageWifiSelectExit;
+lv_obj_t * ui_ContainerWifiPasswordType;
+lv_obj_t * ui_ImageWifiPasswordLock;
+lv_obj_t * ui_TextWifiPasswordType;
+lv_obj_t * ui_ButtonWifiConnect;
+lv_obj_t * ui_LabelWifiConnectButton;
+lv_obj_t * ui_KeyboardWifiPassword;
 // CUSTOM VARIABLES
 
 
@@ -82,18 +121,7 @@ lv_obj_t * ui_LabelUnitCO2;
 lv_obj_t * ui_BarValueCO2;
 lv_obj_t * ui_LabelNameCO2;
 lv_obj_t * ui_PanelLineCenterLeft;
-lv_obj_t * ui_ContainerRegionCenter;
-lv_obj_t * ui_ContainerStatus;
-lv_obj_t * ui_ContaierLeftSide;
-lv_obj_t * ui_LabelTime;
-lv_obj_t * ui_ContainerRightSide;
-lv_obj_t * ui_ContainerMobileSignal;
-lv_obj_t * ui_ImageMobileSignal;
-lv_obj_t * ui_ContainerWifi;
-lv_obj_t * ui_ImageWifi;
-lv_obj_t * ui_ContainerBattery;
-lv_obj_t * ui_ImageBattery;
-lv_obj_t * ui_BarBattery;
+lv_obj_t * ui_ContainerIndicator;
 lv_obj_t * ui_ContainerMain;
 lv_obj_t * ui_ContainerSelectAQI;
 lv_obj_t * ui_LabelValueSelectAQI;
@@ -143,8 +171,8 @@ void ui_event_ContainerCoverSetting(lv_event_t * e);
 lv_obj_t * ui_ContainerCoverSetting;
 void ui_event_PanelSetting(lv_event_t * e);
 lv_obj_t * ui_PanelSetting;
-lv_obj_t * ui_ContainerSetting;
-lv_obj_t * ui_ImageIconSetting;
+lv_obj_t * ui_ContainerSettingIcon;
+lv_obj_t * ui_ImageSettingIcon;
 // CUSTOM VARIABLES
 
 // EVENTS
@@ -154,6 +182,7 @@ lv_obj_t * ui____initial_actions0;
 const lv_img_dsc_t * ui_imgset_mobilesignal[1] = {&ui_img_images_mobilesignal4_png};
 const lv_img_dsc_t * ui_imgset_setting_[1] = {&ui_img_images_setting32_32_png};
 const lv_img_dsc_t * ui_imgset_wifi[3] = {&ui_img_images_wifi1_png, &ui_img_images_wifi2_png, &ui_img_images_wifi3_png};
+const lv_img_dsc_t * ui_imgset_wifi_[1] = {&ui_img_images_wifi_44_png};
 
 ///////////////////// TEST LVGL SETTINGS ////////////////////
 #if LV_COLOR_DEPTH != 16
@@ -171,7 +200,7 @@ void ui_event_ScreenLoadAQI(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_SCREEN_LOADED) {
-        _ui_screen_change(&ui_ScreenIndicatorAQI, LV_SCR_LOAD_ANIM_FADE_ON, 500, 1000, &ui_ScreenIndicatorAQI_screen_init);
+        _ui_screen_change(&ui_ScreenSettingAQI, LV_SCR_LOAD_ANIM_FADE_ON, 700, 300, &ui_ScreenSettingAQI_screen_init);
     }
 }
 
@@ -202,7 +231,13 @@ void ui_init(void)
                                                true, LV_FONT_DEFAULT);
     lv_disp_set_theme(dispp, theme);
     ui_ScreenLoadAQI_screen_init();
+    ui_ScreenSettingAQI_screen_init();
     ui_ScreenIndicatorAQI_screen_init();
     ui____initial_actions0 = lv_obj_create(NULL);
     lv_disp_load_scr(ui_ScreenLoadAQI);
+
+    aqi_utility_init();
+    aqi_setting_init();
+    aqi_indicator_ui_init();
+    aqi_sensor_init();
 }

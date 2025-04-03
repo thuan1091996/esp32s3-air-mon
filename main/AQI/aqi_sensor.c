@@ -14,14 +14,22 @@
 
 #define AQI_SENSOR_MEASUREMENT_PERIOD   1000
 
+#define AQI_SENSOR_TASK_NAME         "AQI Sensor Task"
+#define AQI_SENSOR_TASK_STACK_SIZE   (5 * 1024)
+#define AQI_SENSOR_TASK_PRIORITY     5
+
 static const char *TAG = "AQI SENSOR";
+
+extern bool example_lvgl_lock(int timeout_ms);
+extern void example_lvgl_unlock(void);
 
 static void __aqi_sensor_measurement_task(void *pvParameters)
 {
-    while (1)
+    while (true)
     {
         if (apc1_measurement() == ESP_OK)
         {
+            example_lvgl_lock(-1);
             aqi_indicator_ui_data_show( apc1_get_pm1_0(),
                                         apc1_get_pm2_5(),
                                         apc1_get_pm10(),
@@ -29,6 +37,7 @@ static void __aqi_sensor_measurement_task(void *pvParameters)
                                         apc1_get_T_comp(),
                                         apc1_get_RH_comp(),
                                         apc1_get_TVOC());
+            example_lvgl_unlock();
         }
         else
         {
@@ -44,6 +53,5 @@ void aqi_sensor_init()
     acp1_init();
     apc1_read_infor();
 
-    // Create the measurement task
-    xTaskCreate(&__aqi_sensor_measurement_task, "aqi_sensor_measurement_task", 10 * 1024, NULL, 5, NULL);
+    xTaskCreate(&__aqi_sensor_measurement_task, AQI_SENSOR_TASK_NAME, AQI_SENSOR_TASK_STACK_SIZE, NULL, AQI_SENSOR_TASK_PRIORITY, NULL);
 }
