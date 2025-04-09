@@ -554,10 +554,10 @@ CONFIG_PARTITION_TABLE_MD5=y
 # end of Partition Table
 
 #
-# Example Configuration
+# LGVL Application Configuration
 #
-CONFIG_EXAMPLE_DOUBLE_FB=y
-# end of Example Configuration
+CONFIG_LVGL_DOUBLE_FB=y
+# end of LGVL Application Configuration
 
 #
 # Compiler options

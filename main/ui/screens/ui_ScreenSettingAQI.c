@@ -202,7 +202,7 @@ void ui_ScreenSettingAQI_screen_init(void)
     lv_obj_set_style_pad_bottom(ui_ContainerSettingWifiEnableIcon, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_ImageSettingWifiEnableIcon = lv_img_create(ui_ContainerSettingWifiEnableIcon);
-    lv_img_set_src(ui_ImageSettingWifiEnableIcon, &ui_img_images_wifi_24_blue_png);
+    lv_img_set_src(ui_ImageSettingWifiEnableIcon, &ui_img_images_wifi_blue_24_png);
     lv_obj_set_width(ui_ImageSettingWifiEnableIcon, LV_SIZE_CONTENT);   /// 24
     lv_obj_set_height(ui_ImageSettingWifiEnableIcon, LV_SIZE_CONTENT);    /// 24
     lv_obj_set_align(ui_ImageSettingWifiEnableIcon, LV_ALIGN_LEFT_MID);
@@ -261,7 +261,7 @@ void ui_ScreenSettingAQI_screen_init(void)
     lv_obj_set_style_pad_bottom(ui_ContainerWifiSelectIcon, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_ImageWifiSelectIcon = lv_img_create(ui_ContainerWifiSelectIcon);
-    lv_img_set_src(ui_ImageWifiSelectIcon, &ui_img_images_wifi_24_blue_png);
+    lv_img_set_src(ui_ImageWifiSelectIcon, &ui_img_images_wifi_blue_24_png);
     lv_obj_set_width(ui_ImageWifiSelectIcon, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_ImageWifiSelectIcon, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(ui_ImageWifiSelectIcon, LV_ALIGN_LEFT_MID);
@@ -278,7 +278,7 @@ void ui_ScreenSettingAQI_screen_init(void)
     lv_obj_set_style_text_font(ui_LabelWifiSelectName, &ui_font_Poppins_Regular_18, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_ImageWifiSelectExit = lv_img_create(ui_ContainerWifiSelect);
-    lv_img_set_src(ui_ImageWifiSelectExit, &ui_img_images_exit_white_png);
+    lv_img_set_src(ui_ImageWifiSelectExit, &ui_img_images_exit_png);
     lv_obj_set_width(ui_ImageWifiSelectExit, LV_SIZE_CONTENT);   /// 24
     lv_obj_set_height(ui_ImageWifiSelectExit, LV_SIZE_CONTENT);    /// 24
     lv_obj_set_align(ui_ImageWifiSelectExit, LV_ALIGN_RIGHT_MID);
@@ -301,7 +301,7 @@ void ui_ScreenSettingAQI_screen_init(void)
     lv_obj_set_style_border_width(ui_ContainerWifiPasswordType, 1, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_ImageWifiPasswordLock = lv_img_create(ui_ContainerWifiPasswordType);
-    lv_img_set_src(ui_ImageWifiPasswordLock, &ui_img_images_wifi_lock_20_white_png);
+    lv_img_set_src(ui_ImageWifiPasswordLock, &ui_img_images_wifi_lock_select_png);
     lv_obj_set_width(ui_ImageWifiPasswordLock, LV_SIZE_CONTENT);   /// 24
     lv_obj_set_height(ui_ImageWifiPasswordLock, LV_SIZE_CONTENT);    /// 24
     lv_obj_set_x(ui_ImageWifiPasswordLock, 12);

@@ -5,43 +5,45 @@ SET(SOURCES screens/ui_ScreenLoadAQI.c
     components/ui_comp_hook.c
     ui_helpers.c
     ui_events.c
-    images/ui_img_images_mobilesignal4_png.c
-    images/ui_img_images_wifi3_png.c
+    images/ui_img_images_mobilesignal_png.c
+    images/ui_img_images_wifi_signal_3_png.c
     images/ui_img_images_batteryoutline_png.c
-    images/ui_img_images_line_png.c
-    images/ui_img_images_load_png.c
+    images/ui_img_images_load_spinner_png.c
+    images/ui_img_images_load_en_us_png.c
     images/ui_img_images_wifi_44_png.c
     images/ui_img_images_stage_grey_png.c
-    images/ui_img_images_wifi_24_blue_png.c
-    images/ui_img_images_exit_white_png.c
-    images/ui_img_images_wifi_lock_20_white_png.c
-    images/ui_img_images_pm_white_png.c
-    images/ui_img_images_co2_white_png.c
-    images/ui_img_images_temp_white_png.c
-    images/ui_img_images_rh_white_png.c
-    images/ui_img_images_tvoc_white_png.c
-    images/ui_img_images_setting32_32_png.c
-    images/ui_img_images_co2_green_png.c
-    images/ui_img_images_co2_orange_png.c
-    images/ui_img_images_co2_red_png.c
-    images/ui_img_images_pm_green_png.c
-    images/ui_img_images_pm_orange_png.c
-    images/ui_img_images_pm_red_png.c
-    images/ui_img_images_rh_green_png.c
-    images/ui_img_images_rh_orange_png.c
-    images/ui_img_images_rh_red_png.c
+    images/ui_img_images_wifi_blue_24_png.c
+    images/ui_img_images_exit_png.c
+    images/ui_img_images_wifi_lock_select_png.c
+    images/ui_img_images_pm_png.c
+    images/ui_img_images_co2_png.c
+    images/ui_img_images_pm_good_png.c
+    images/ui_img_images_temp_png.c
+    images/ui_img_images_rh_png.c
+    images/ui_img_images_tvoc_png.c
+    images/ui_img_images_setting_png.c
+    images/ui_img_images_co2_bad_png.c
+    images/ui_img_images_co2_good_png.c
+    images/ui_img_images_co2_warning_png.c
+    images/ui_img_images_pm_bad_png.c
+    images/ui_img_images_pm_warning_png.c
+    images/ui_img_images_rh_bad_png.c
+    images/ui_img_images_rh_good_png.c
+    images/ui_img_images_rh_warning_png.c
     images/ui_img_images_stage_green_png.c
-    images/ui_img_images_temp_green_png.c
-    images/ui_img_images_temp_orange_png.c
-    images/ui_img_images_temp_red_png.c
-    images/ui_img_images_tick_green_png.c
-    images/ui_img_images_tvoc_green_png.c
-    images/ui_img_images_tvoc_orange_png.c
-    images/ui_img_images_tvoc_red_png.c
-    images/ui_img_images_wifi1_png.c
-    images/ui_img_images_wifi2_png.c
-    images/ui_img_images_wifi_24_white_png.c
-    images/ui_img_images_wifi_lock_20_grey_png.c
+    images/ui_img_images_temp_bad_png.c
+    images/ui_img_images_temp_good_png.c
+    images/ui_img_images_temp_warning_png.c
+    images/ui_img_images_tick_png.c
+    images/ui_img_images_tvoc_bad_png.c
+    images/ui_img_images_tvoc_good_png.c
+    images/ui_img_images_tvoc_warning_png.c
+    images/ui_img_images_wifi_lock_unselect_png.c
+    images/ui_img_images_wifi_signal_1_png.c
+    images/ui_img_images_wifi_signal_2_png.c
+    images/ui_img_images_wifi_white_24_png.c
+    images/ui_img_images_stage_green_png.c
+    images/ui_img_images_stage_grey_png.c
     fonts/ui_font_OpenSans_Regular_14.c
     fonts/ui_font_OpenSans_Regular_16.c
     fonts/ui_font_Poppins_ExtraLight_116.c

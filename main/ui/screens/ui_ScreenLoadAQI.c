@@ -60,7 +60,7 @@ void ui_ScreenLoadAQI_screen_init(void)
     lv_obj_clear_flag(ui_ContainerMobileSignal, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
     ui_ImageMobileSignal = lv_img_create(ui_ContainerMobileSignal);
-    lv_img_set_src(ui_ImageMobileSignal, &ui_img_images_mobilesignal4_png);
+    lv_img_set_src(ui_ImageMobileSignal, &ui_img_images_mobilesignal_png);
     lv_obj_set_width(ui_ImageMobileSignal, LV_SIZE_CONTENT);   /// 18
     lv_obj_set_height(ui_ImageMobileSignal, LV_SIZE_CONTENT);    /// 12
     lv_obj_set_align(ui_ImageMobileSignal, LV_ALIGN_LEFT_MID);
@@ -77,7 +77,7 @@ void ui_ScreenLoadAQI_screen_init(void)
     lv_obj_clear_flag(ui_ContainerWifi, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
     ui_ImageWifi = lv_img_create(ui_ContainerWifi);
-    lv_img_set_src(ui_ImageWifi, &ui_img_images_wifi3_png);
+    lv_img_set_src(ui_ImageWifi, &ui_img_images_wifi_signal_3_png);
     lv_obj_set_width(ui_ImageWifi, LV_SIZE_CONTENT);   /// 6
     lv_obj_set_height(ui_ImageWifi, LV_SIZE_CONTENT);    /// 4
     lv_obj_set_align(ui_ImageWifi, LV_ALIGN_BOTTOM_MID);
@@ -139,7 +139,8 @@ void ui_ScreenLoadAQI_screen_init(void)
     lv_obj_set_style_arc_opa(ui_SpinnerLoadProgress, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_arc_width(ui_SpinnerLoadProgress, 4, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    lv_obj_set_style_arc_img_src(ui_SpinnerLoadProgress, &ui_img_images_line_png, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+    lv_obj_set_style_arc_img_src(ui_SpinnerLoadProgress, &ui_img_images_load_spinner_png,
+                                 LV_PART_INDICATOR | LV_STATE_DEFAULT);
 
     ui_ContainerLoading = lv_obj_create(ui_SpinnerLoadProgress);
     lv_obj_remove_style_all(ui_ContainerLoading);
@@ -156,7 +157,7 @@ void ui_ScreenLoadAQI_screen_init(void)
     lv_obj_clear_flag(ui_ContainerLoadName, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
     ui_ImageLoadName = lv_img_create(ui_ContainerLoadName);
-    lv_img_set_src(ui_ImageLoadName, &ui_img_images_load_png);
+    lv_img_set_src(ui_ImageLoadName, &ui_img_images_load_en_us_png);
     lv_obj_set_width(ui_ImageLoadName, LV_SIZE_CONTENT);   /// 268
     lv_obj_set_height(ui_ImageLoadName, LV_SIZE_CONTENT);    /// 38
     lv_obj_set_align(ui_ImageLoadName, LV_ALIGN_CENTER);

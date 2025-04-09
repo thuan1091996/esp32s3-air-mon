@@ -13,14 +13,15 @@
 #include "esp_err.h"
 #include "esp_log.h"
 
+#define AQI_SETTING_CONTAINER_STATUS_SIZE 800, 47
+
 typedef enum {
     aqi_setting_stage_none,
     aqi_setting_stage_language,
     aqi_setting_stage_country,
     aqi_setting_stage_wifi,
     aqi_setting_stage_done
-} 
-aqi_setting_stage_t;
+} aqi_setting_stage_t;
 
 typedef struct {
     uint8_t initialized;
@@ -73,7 +74,7 @@ static void __aqi_setting_event_handler(lv_event_t *event)
         {
             ESP_LOGI(TAG, "Setting screen loaded event triggered");
             lv_obj_set_parent(ui_ContainerStatus, ui_ContainerSettingMain);
-            lv_obj_set_size(ui_ContainerStatus, 800, 47);
+            lv_obj_set_size(ui_ContainerStatus, AQI_SETTING_CONTAINER_STATUS_SIZE);
             __aqi_setting_components_init();
             __aqi_setting_config_factory();
         }

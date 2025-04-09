@@ -15,6 +15,7 @@ extern "C" {
 #include "ui_helpers.h"
 #include "ui_events.h"
 
+#include "aqi_config.h"
 #include "aqi_utility.h"
 #include "aqi_indicator_ui.h"
 #include "aqi_setting.h"
@@ -189,43 +190,45 @@ extern lv_obj_t * ui_ImageSettingIcon;
 extern lv_obj_t * ui____initial_actions0;
 
 // IMAGES AND IMAGE SETS
-LV_IMG_DECLARE(ui_img_images_mobilesignal4_png);    // assets/Images/MobileSignal4.png
-LV_IMG_DECLARE(ui_img_images_wifi3_png);    // assets/Images/Wifi3.png
+LV_IMG_DECLARE(ui_img_images_mobilesignal_png);    // assets/Images/MobileSignal.png
+LV_IMG_DECLARE(ui_img_images_wifi_signal_3_png);    // assets/Images/Wifi_Signal_3.png
 LV_IMG_DECLARE(ui_img_images_batteryoutline_png);    // assets/Images/BatteryOutline.png
-LV_IMG_DECLARE(ui_img_images_line_png);    // assets/Images/Line.png
-LV_IMG_DECLARE(ui_img_images_load_png);    // assets/Images/load.png
+LV_IMG_DECLARE(ui_img_images_load_spinner_png);    // assets/Images/Load_Spinner.png
+LV_IMG_DECLARE(ui_img_images_load_en_us_png);    // assets/Images/Load_en_US.png
 LV_IMG_DECLARE(ui_img_images_wifi_44_png);    // assets/Images/Wifi_44.png
 LV_IMG_DECLARE(ui_img_images_stage_grey_png);    // assets/Images/stage_grey.png
-LV_IMG_DECLARE(ui_img_images_wifi_24_blue_png);    // assets/Images/wifi_24_blue.png
-LV_IMG_DECLARE(ui_img_images_exit_white_png);    // assets/Images/exit_white.png
-LV_IMG_DECLARE(ui_img_images_wifi_lock_20_white_png);    // assets/Images/wifi_lock_20_white.png
-LV_IMG_DECLARE(ui_img_images_pm_white_png);    // assets/Images/PM_White.png
-LV_IMG_DECLARE(ui_img_images_co2_white_png);    // assets/Images/CO2_White.png
-LV_IMG_DECLARE(ui_img_images_temp_white_png);    // assets/Images/TEMP_White.png
-LV_IMG_DECLARE(ui_img_images_rh_white_png);    // assets/Images/RH_White.png
-LV_IMG_DECLARE(ui_img_images_tvoc_white_png);    // assets/Images/TVOC_White.png
-LV_IMG_DECLARE(ui_img_images_setting32_32_png);    // assets/Images/Setting32_32.png
-LV_IMG_DECLARE(ui_img_images_co2_green_png);    // assets/Images/CO2_Green.png
-LV_IMG_DECLARE(ui_img_images_co2_orange_png);    // assets/Images/CO2_Orange.png
-LV_IMG_DECLARE(ui_img_images_co2_red_png);    // assets/Images/CO2_Red.png
-LV_IMG_DECLARE(ui_img_images_pm_green_png);    // assets/Images/PM_Green.png
-LV_IMG_DECLARE(ui_img_images_pm_orange_png);    // assets/Images/PM_Orange.png
-LV_IMG_DECLARE(ui_img_images_pm_red_png);    // assets/Images/PM_Red.png
-LV_IMG_DECLARE(ui_img_images_rh_green_png);    // assets/Images/RH_Green.png
-LV_IMG_DECLARE(ui_img_images_rh_orange_png);    // assets/Images/RH_Orange.png
-LV_IMG_DECLARE(ui_img_images_rh_red_png);    // assets/Images/RH_Red.png
+LV_IMG_DECLARE(ui_img_images_wifi_blue_24_png);    // assets/Images/Wifi_Blue_24.png
+LV_IMG_DECLARE(ui_img_images_exit_png);    // assets/Images/Exit.png
+LV_IMG_DECLARE(ui_img_images_wifi_lock_select_png);    // assets/Images/Wifi_Lock_Select.png
+LV_IMG_DECLARE(ui_img_images_pm_png);    // assets/Images/PM.png
+LV_IMG_DECLARE(ui_img_images_co2_png);    // assets/Images/CO2.png
+LV_IMG_DECLARE(ui_img_images_pm_good_png);    // assets/Images/PM_Good.png
+LV_IMG_DECLARE(ui_img_images_temp_png);    // assets/Images/TEMP.png
+LV_IMG_DECLARE(ui_img_images_rh_png);    // assets/Images/RH.png
+LV_IMG_DECLARE(ui_img_images_tvoc_png);    // assets/Images/TVOC.png
+LV_IMG_DECLARE(ui_img_images_setting_png);    // assets/Images/Setting.png
+LV_IMG_DECLARE(ui_img_images_co2_bad_png);    // assets/Images/CO2_Bad.png
+LV_IMG_DECLARE(ui_img_images_co2_good_png);    // assets/Images/CO2_Good.png
+LV_IMG_DECLARE(ui_img_images_co2_warning_png);    // assets/Images/CO2_Warning.png
+LV_IMG_DECLARE(ui_img_images_pm_bad_png);    // assets/Images/PM_Bad.png
+LV_IMG_DECLARE(ui_img_images_pm_warning_png);    // assets/Images/PM_Warning.png
+LV_IMG_DECLARE(ui_img_images_rh_bad_png);    // assets/Images/RH_Bad.png
+LV_IMG_DECLARE(ui_img_images_rh_good_png);    // assets/Images/RH_Good.png
+LV_IMG_DECLARE(ui_img_images_rh_warning_png);    // assets/Images/RH_Warning.png
 LV_IMG_DECLARE(ui_img_images_stage_green_png);    // assets/Images/stage_green.png
-LV_IMG_DECLARE(ui_img_images_temp_green_png);    // assets/Images/TEMP_Green.png
-LV_IMG_DECLARE(ui_img_images_temp_orange_png);    // assets/Images/TEMP_Orange.png
-LV_IMG_DECLARE(ui_img_images_temp_red_png);    // assets/Images/TEMP_Red.png
-LV_IMG_DECLARE(ui_img_images_tick_green_png);    // assets/Images/tick_green.png
-LV_IMG_DECLARE(ui_img_images_tvoc_green_png);    // assets/Images/TVOC_Green.png
-LV_IMG_DECLARE(ui_img_images_tvoc_orange_png);    // assets/Images/TVOC_Orange.png
-LV_IMG_DECLARE(ui_img_images_tvoc_red_png);    // assets/Images/TVOC_Red.png
-LV_IMG_DECLARE(ui_img_images_wifi1_png);    // assets/Images/Wifi1.png
-LV_IMG_DECLARE(ui_img_images_wifi2_png);    // assets/Images/Wifi2.png
-LV_IMG_DECLARE(ui_img_images_wifi_24_white_png);    // assets/Images/wifi_24_white.png
-LV_IMG_DECLARE(ui_img_images_wifi_lock_20_grey_png);    // assets/Images/wifi_lock_20_grey.png
+LV_IMG_DECLARE(ui_img_images_temp_bad_png);    // assets/Images/TEMP_Bad.png
+LV_IMG_DECLARE(ui_img_images_temp_good_png);    // assets/Images/TEMP_Good.png
+LV_IMG_DECLARE(ui_img_images_temp_warning_png);    // assets/Images/TEMP_Warning.png
+LV_IMG_DECLARE(ui_img_images_tick_png);    // assets/Images/Tick.png
+LV_IMG_DECLARE(ui_img_images_tvoc_bad_png);    // assets/Images/TVOC_Bad.png
+LV_IMG_DECLARE(ui_img_images_tvoc_good_png);    // assets/Images/TVOC_Good.png
+LV_IMG_DECLARE(ui_img_images_tvoc_warning_png);    // assets/Images/TVOC_Warning.png
+LV_IMG_DECLARE(ui_img_images_wifi_lock_unselect_png);    // assets/Images/Wifi_Lock_Unselect.png
+LV_IMG_DECLARE(ui_img_images_wifi_signal_1_png);    // assets/Images/Wifi_Signal_1.png
+LV_IMG_DECLARE(ui_img_images_wifi_signal_2_png);    // assets/Images/Wifi_Signal_2.png
+LV_IMG_DECLARE(ui_img_images_wifi_white_24_png);    // assets/Images/Wifi_White_24.png
+LV_IMG_DECLARE(ui_img_images_stage_green_png);    // assets/Images/Stage_Green.png
+LV_IMG_DECLARE(ui_img_images_stage_grey_png);    // assets/Images/Stage_Grey.png
 
 // FONTS
 LV_FONT_DECLARE(ui_font_OpenSans_Regular_14);

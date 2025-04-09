@@ -9,9 +9,10 @@
 #include "esp_err.h"
 #include "esp_log.h"
 
-#define AQI_UTILITY_TASK_NAME         "AQI Utility Task"
-#define AQI_UTILITY_TASK_STACK_SIZE   (5 * 1024)
-#define AQI_UTILITY_TASK_PRIORITY     5
+#define AQI_UTILITY_TASK_NAME       "AQI Utility Task"
+#define AQI_UTILITY_TASK_STACK_SIZE (5 * 1024)
+#define AQI_UTILITY_TASK_PRIORITY   5
+#define AQI_UTILITY_TASK_DELAY      1000
 
 static const char *TAG = "AQI UTILITY";
 
@@ -40,7 +41,7 @@ static void __aqi_utility_task_handler(void *pvParameters)
             aqi_utility_update_time(timeinfo);
         }
     
-        vTaskDelay(pdMS_TO_TICKS(1000));
+        vTaskDelay(pdMS_TO_TICKS(AQI_UTILITY_TASK_DELAY));
     }
 }
 
@@ -48,8 +49,8 @@ int aqi_utility_init()
 {
     aqi_utility_update_time(__aqi_utility_get_current_time());
 
-    xTaskCreate(__aqi_utility_task_handler, AQI_UTILITY_TASK_NAME, AQI_UTILITY_TASK_STACK_SIZE,
-                NULL, AQI_UTILITY_TASK_PRIORITY, NULL);
+    xTaskCreate(__aqi_utility_task_handler, AQI_UTILITY_TASK_NAME,
+                AQI_UTILITY_TASK_STACK_SIZE, NULL, AQI_UTILITY_TASK_PRIORITY, NULL);
     
     return ESP_OK;
 }

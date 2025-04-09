@@ -17,6 +17,8 @@
 #include "esp_log.h"
 
 #define AQI_WIFI_SSID_MAX          20
+#define AQI_WIFI_SSID_NAME_MAX     32
+#define AQI_WIFI_SSID_PASSWORD_MAX 64
 
 #define AQI_WIFI_TASK_NAME         "AQI WiFi Task"
 #define AQI_WIFI_TASK_STACK_SIZE   (10 * 1024)
@@ -25,6 +27,27 @@
 #define AQI_WIFI_NTP_SERVER_NAME   "time.google.com"
 
 #define AQI_WIFI_TITLE_NAME        "Wi-Fi Settings"
+
+#define AQI_WIFI_SSID_CONTAINER_BG_OPA  82
+#define AQI_WIFI_SSID_CONTAINER_PADDING 12
+#define AQI_WIFI_SSID_CONTAINER_RADIUS  8
+#define AQI_WIFI_SSID_CONTAINER_SIZE    736, 160
+#define AQI_WIFI_SSID_CONTAINER_OFFSET  0, 84
+
+#define AQI_WIFI_SSID_ITEM_BG_COLOR_SELECT   lv_color_hex(0x30323B)
+#define AQI_WIFI_SSID_ITEM_BG_COLOR_UNSELECT lv_color_hex(0x1F2127)
+#define AQI_WIFI_SSID_ITEM_BG_OPA            255
+#define AQI_WIFI_SSID_ITEM_PADDING_LEFT      20
+#define AQI_WIFI_SSID_ITEM_PADDING_RIGHT     12
+#define AQI_WIFI_SSID_ITEM_PADDING_TOP       10
+#define AQI_WIFI_SSID_ITEM_PADDING_BOTTOM    10
+#define AQI_WIFI_SSID_ITEM_SIZE              730, 48
+#define AQI_WIFI_SSID_ITEM_OFFSET(i)         0, i * 48
+
+#define AQI_WIFI_SSID_ICON_OFFSET 0, 0
+#define AQI_WIFI_SSID_NAME_OFFSET 32, 0
+#define AQI_WIFI_SSID_LOCK_OFFSET 8, 0
+#define AQI_WIFI_SSID_TICK_OFFSET 0, 0
 
 typedef enum {
     aqi_wifi_event_change_state   = BIT0,
@@ -54,8 +77,8 @@ typedef struct {
 } aqi_wifi_ssid_ui_t;
 
 typedef struct {
-    char name[32];
-    char password[64];
+    char name[AQI_WIFI_SSID_NAME_MAX];
+    char password[AQI_WIFI_SSID_PASSWORD_MAX];
 } aqi_wifi_ssid_info_t;
 
 typedef struct {
@@ -94,19 +117,19 @@ static void __aqi_wifi_init_styles()
 {
     // Style for SSID container
     lv_style_init(&_container_style);
-    lv_style_set_bg_color(&_container_style, lv_color_hex(0x30323B));
-    lv_style_set_bg_opa(&_container_style, 82);
-    lv_style_set_pad_all(&_container_style, 12);
-    lv_style_set_radius(&_container_style, 8);
+    lv_style_set_bg_color(&_container_style, AQI_WIFI_SSID_ITEM_BG_COLOR_SELECT);
+    lv_style_set_bg_opa(&_container_style, AQI_WIFI_SSID_CONTAINER_BG_OPA);
+    lv_style_set_pad_all(&_container_style, AQI_WIFI_SSID_CONTAINER_PADDING);
+    lv_style_set_radius(&_container_style, AQI_WIFI_SSID_CONTAINER_RADIUS);
 
     // Style for SSID item
     lv_style_init(&_ssid_item_style);
-    lv_style_set_bg_color(&_ssid_item_style, lv_color_hex(0x1F2127));
-    lv_style_set_bg_opa(&_ssid_item_style, 255);
-    lv_style_set_pad_left(&_ssid_item_style, 20);
-    lv_style_set_pad_right(&_ssid_item_style, 12);
-    lv_style_set_pad_top(&_ssid_item_style, 10);
-    lv_style_set_pad_bottom(&_ssid_item_style, 10);
+    lv_style_set_bg_color(&_ssid_item_style, AQI_WIFI_SSID_ITEM_BG_COLOR_UNSELECT);
+    lv_style_set_bg_opa(&_ssid_item_style, AQI_WIFI_SSID_ITEM_BG_OPA);
+    lv_style_set_pad_left(&_ssid_item_style, AQI_WIFI_SSID_ITEM_PADDING_LEFT);
+    lv_style_set_pad_right(&_ssid_item_style, AQI_WIFI_SSID_ITEM_PADDING_RIGHT);
+    lv_style_set_pad_top(&_ssid_item_style, AQI_WIFI_SSID_ITEM_PADDING_TOP);
+    lv_style_set_pad_bottom(&_ssid_item_style, AQI_WIFI_SSID_ITEM_PADDING_BOTTOM);
 
     // Style for SSID name
     lv_style_init(&_ssid_name_style);
@@ -132,8 +155,9 @@ static lv_obj_t *__aqi_wifi_create_label(lv_obj_t *parent, const char *text, lv_
 
 static void __aqi_wifi_ssid_select_item_update(aqi_wifi_ssid_ui_t *ssid_ui, uint8_t select)
 {
-    lv_obj_set_style_bg_color(ssid_ui->item, lv_color_hex(select ? 0x30323B : 0x1F2127), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_img_set_src(ssid_ui->lock, select ? &ui_img_images_wifi_lock_20_white_png : &ui_img_images_wifi_lock_20_grey_png);
+    lv_obj_set_style_bg_color(ssid_ui->item, select ? AQI_WIFI_SSID_ITEM_BG_COLOR_SELECT : AQI_WIFI_SSID_ITEM_BG_COLOR_UNSELECT,
+                              LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_img_set_src(ssid_ui->lock, select ? &ui_img_images_wifi_lock_select_png : &ui_img_images_wifi_lock_unselect_png);
     select ? lv_obj_clear_flag(ssid_ui->tick, LV_OBJ_FLAG_HIDDEN) : lv_obj_add_flag(ssid_ui->tick, LV_OBJ_FLAG_HIDDEN);
 }
 
@@ -162,10 +186,9 @@ static int __aqi_wifi_create_ssid_container()
 {
     lv_obj_t *container = lv_obj_create(ui_ContainerSettingWifi);
     lv_obj_add_style(container, &_container_style, 0);
-    lv_obj_set_size(container, 736, 160);
-    lv_obj_align(container, LV_ALIGN_TOP_MID, 0, 84);
+    lv_obj_set_size(container, AQI_WIFI_SSID_CONTAINER_SIZE);
+    lv_obj_align(container, LV_ALIGN_TOP_MID, AQI_WIFI_SSID_CONTAINER_OFFSET);
     lv_obj_set_scroll_dir(container, LV_DIR_VER);
-    lv_obj_set_style_bg_opa(container, 82, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
 
     _aqi_wifi.ssid.container = container;
 
@@ -184,14 +207,18 @@ static int __aqi_wifi_create_ssid(uint16_t ap_number, wifi_ap_record_t ap_info[]
     {
         lv_obj_t *ssid_item = lv_obj_create(_aqi_wifi.ssid.container);
         lv_obj_add_style(ssid_item, &_ssid_item_style, 0);
-        lv_obj_set_size(ssid_item, 730, 48);
-        lv_obj_align(ssid_item, LV_ALIGN_TOP_MID, 0, i * 48);
+        lv_obj_set_size(ssid_item, AQI_WIFI_SSID_ITEM_SIZE);
+        lv_obj_align(ssid_item, LV_ALIGN_TOP_MID, AQI_WIFI_SSID_ITEM_OFFSET(i));
         lv_obj_clear_flag(ssid_item, LV_OBJ_FLAG_SCROLLABLE);
 
-        lv_obj_t *ssid_icon = __aqi_wifi_create_image(ssid_item, &ui_img_images_wifi_24_white_png, LV_ALIGN_LEFT_MID, 0, 0);
-        lv_obj_t *ssid_name = __aqi_wifi_create_label(ssid_item, (char *)ap_info[i].ssid, LV_ALIGN_LEFT_MID, 32, 0);
-        lv_obj_t *ssid_lock = __aqi_wifi_create_image(ssid_name, &ui_img_images_wifi_lock_20_grey_png, LV_ALIGN_OUT_RIGHT_MID, 8, 0);
-        lv_obj_t *ssid_tick = __aqi_wifi_create_image(ssid_item, &ui_img_images_tick_green_png, LV_ALIGN_RIGHT_MID, 0, 0);
+        lv_obj_t *ssid_icon = __aqi_wifi_create_image(ssid_item, &ui_img_images_wifi_white_24_png,
+                                                      LV_ALIGN_LEFT_MID, AQI_WIFI_SSID_ICON_OFFSET);
+        lv_obj_t *ssid_name = __aqi_wifi_create_label(ssid_item, (char *)ap_info[i].ssid,
+                                                      LV_ALIGN_LEFT_MID, AQI_WIFI_SSID_NAME_OFFSET);
+        lv_obj_t *ssid_lock = __aqi_wifi_create_image(ssid_name, &ui_img_images_wifi_lock_unselect_png,
+                                                      LV_ALIGN_OUT_RIGHT_MID, AQI_WIFI_SSID_LOCK_OFFSET);
+        lv_obj_t *ssid_tick = __aqi_wifi_create_image(ssid_item, &ui_img_images_tick_png,
+                                                      LV_ALIGN_RIGHT_MID, AQI_WIFI_SSID_TICK_OFFSET);
         lv_obj_add_flag(ssid_tick, LV_OBJ_FLAG_HIDDEN);
 
         _aqi_wifi.ssid.ui[i] = (aqi_wifi_ssid_ui_t){ssid_item, ssid_icon, ssid_name, ssid_lock, ssid_tick};
@@ -458,7 +485,8 @@ int aqi_wifi_init()
 {
     // Initialize Event Group and Task
     _aqi_wifi.event_handle = xEventGroupCreate();
-    xTaskCreate(__aqi_wifi_task_handler, AQI_WIFI_TASK_NAME, AQI_WIFI_TASK_STACK_SIZE, &_aqi_wifi, AQI_WIFI_TASK_PRIORITY, NULL);
+    xTaskCreate(__aqi_wifi_task_handler, AQI_WIFI_TASK_NAME,
+                AQI_WIFI_TASK_STACK_SIZE, &_aqi_wifi, AQI_WIFI_TASK_PRIORITY, NULL);
 
     // Initialize Wi-Fi
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
@@ -474,7 +502,7 @@ int aqi_wifi_init()
     // Initialize SNTP
     esp_sntp_setoperatingmode(SNTP_OPMODE_POLL);
     esp_sntp_setservername(0, AQI_WIFI_NTP_SERVER_NAME);
-    sntp_set_time_sync_notification_cb(__aqi_wifi_time_sync_callback);
+    sntp_set_time_sync_notification_cb((void*)__aqi_wifi_time_sync_callback);
     esp_sntp_init();
 
     // Initialize UI elements

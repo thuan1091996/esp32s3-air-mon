@@ -8,21 +8,13 @@ extern "C" {
 
 #include <stdint.h>
 
+#include "aqi_config.h"
+
 #include "lvgl.h"
 
 typedef struct aqi_indicator_t aqi_indicator_t;
 
-// Define the interface/methods for the AQI Indicator
 typedef struct {
-    uint16_t value;
-    uint16_t threshold_1;
-    uint16_t threshold_2;
-    const char *name;
-    const char *unit;
-} aqi_indicator_data_t;
-
-typedef struct  {
-    lv_obj_t **container;
     lv_obj_t **value_label;
     lv_obj_t **unit_label;
     lv_obj_t **bar;
@@ -32,18 +24,19 @@ typedef struct  {
     lv_obj_t **click_panel;
 
     // Images for different indicator level
-    const lv_img_dsc_t *image_green;
-    const lv_img_dsc_t *image_orange;
-    const lv_img_dsc_t *image_red;
+    const lv_img_dsc_t *image_good;
+    const lv_img_dsc_t *image_warning;
+    const lv_img_dsc_t *image_bad;
 } aqi_indicator_ui_t;
 
 typedef struct {
-    aqi_indicator_data_t data;  // Data
-    aqi_indicator_ui_t ui;      // UI Components
+    uint16_t value;                 // Current value
+    aqi_config_indicator_t *config; // Configuration data
+    aqi_indicator_ui_t ui;          // UI Components
 } aqi_indicator_attribute_t;
 
 struct aqi_indicator_t {
-    aqi_indicator_attribute_t* attribute;
+    aqi_indicator_attribute_t *attribute;
 
     // Methods (function pointers)
     void (*update_value)(aqi_indicator_t *self, uint16_t new_value);

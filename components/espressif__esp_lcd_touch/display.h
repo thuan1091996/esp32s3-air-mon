@@ -50,11 +50,11 @@ static const char *TAG = "example";
 #define EXAMPLE_LCD_H_RES              800
 #define EXAMPLE_LCD_V_RES              480
 
-#if CONFIG_EXAMPLE_DOUBLE_FB
+#if CONFIG_LVGL_DOUBLE_FB
 #define EXAMPLE_LCD_NUM_FB             2
 #else
 #define EXAMPLE_LCD_NUM_FB             1
-#endif // CONFIG_EXAMPLE_DOUBLE_FB
+#endif // CONFIG_LVGL_DOUBLE_FB
 
 #define EXAMPLE_LVGL_TICK_PERIOD_MS    2
 #define EXAMPLE_LVGL_TASK_MAX_DELAY_MS 500
@@ -65,7 +65,7 @@ static const char *TAG = "example";
 static SemaphoreHandle_t lvgl_mux = NULL;
 
 // we use two semaphores to sync the VSYNC event and the LVGL task, to avoid potential tearing effect
-#if CONFIG_EXAMPLE_AVOID_TEAR_EFFECT_WITH_SEM
+#if CONFIG_LVGL_AVOID_TEAR_EFFECT_WITH_SEM
 SemaphoreHandle_t sem_vsync_end;
 SemaphoreHandle_t sem_gui_ready;
 #endif
@@ -75,7 +75,7 @@ extern void example_lvgl_demo_ui(lv_disp_t *disp);
 static bool example_on_vsync_event(esp_lcd_panel_handle_t panel, const esp_lcd_rgb_panel_event_data_t *event_data, void *user_data)
 {
     BaseType_t high_task_awoken = pdFALSE;
-#if CONFIG_EXAMPLE_AVOID_TEAR_EFFECT_WITH_SEM
+#if CONFIG_LVGL_AVOID_TEAR_EFFECT_WITH_SEM
     if (xSemaphoreTakeFromISR(sem_gui_ready, &high_task_awoken) == pdTRUE) {
         xSemaphoreGiveFromISR(sem_vsync_end, &high_task_awoken);
     }
@@ -90,7 +90,7 @@ static void example_lvgl_flush_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_
     int offsetx2 = area->x2;
     int offsety1 = area->y1;
     int offsety2 = area->y2;
-#if CONFIG_EXAMPLE_AVOID_TEAR_EFFECT_WITH_SEM
+#if CONFIG_LVGL_AVOID_TEAR_EFFECT_WITH_SEM
     xSemaphoreGive(sem_gui_ready);
     xSemaphoreTake(sem_vsync_end, portMAX_DELAY);
 #endif
@@ -201,7 +201,7 @@ void display(void)
     static lv_disp_draw_buf_t disp_buf; // contains internal graphic buffer(s) called draw buffer(s)
     static lv_disp_drv_t disp_drv;      // contains callback functions
 
-#if CONFIG_EXAMPLE_AVOID_TEAR_EFFECT_WITH_SEM
+#if CONFIG_LVGL_AVOID_TEAR_EFFECT_WITH_SEM
     ESP_LOGI(TAG, "Create semaphores");
     sem_vsync_end = xSemaphoreCreateBinary();
     assert(sem_vsync_end);
@@ -224,7 +224,7 @@ void display(void)
         .data_width = 16, // RGB565 in parallel mode, thus 16bit in width
         .psram_trans_align = 64,
         .num_fbs = EXAMPLE_LCD_NUM_FB,
-#if CONFIG_EXAMPLE_USE_BOUNCE_BUFFER
+#if CONFIG_LVGL_USE_BOUNCE_BUFFER
         .bounce_buffer_size_px = 10 * EXAMPLE_LCD_H_RES,
 #endif
         .clk_src = LCD_CLK_SRC_DEFAULT,
@@ -331,7 +331,7 @@ void display(void)
     lv_init();
     void *buf1 = NULL;
     void *buf2 = NULL;
-#if CONFIG_EXAMPLE_DOUBLE_FB
+#if CONFIG_LVGL_DOUBLE_FB
     ESP_LOGI(TAG, "Use frame buffers as LVGL draw buffers");
     ESP_ERROR_CHECK(esp_lcd_rgb_panel_get_frame_buffer(panel_handle, 2, &buf1, &buf2));
     // initialize LVGL draw buffers
@@ -342,7 +342,7 @@ void display(void)
     assert(buf1);
     // initialize LVGL draw buffers
     lv_disp_draw_buf_init(&disp_buf, buf1, buf2, EXAMPLE_LCD_H_RES * 100);
-#endif // CONFIG_EXAMPLE_DOUBLE_FB
+#endif // CONFIG_LVGL_DOUBLE_FB
 
     ESP_LOGI(TAG, "Register display driver to LVGL");
     lv_disp_drv_init(&disp_drv);
@@ -351,7 +351,7 @@ void display(void)
     disp_drv.flush_cb = example_lvgl_flush_cb;
     disp_drv.draw_buf = &disp_buf;
     disp_drv.user_data = panel_handle;
-#if CONFIG_EXAMPLE_DOUBLE_FB
+#if CONFIG_LVGL_DOUBLE_FB
     disp_drv.full_refresh = true; // the full_refresh mode can maintain the synchronization between the two frame buffers
 #endif
     lv_disp_t *disp = lv_disp_drv_register(&disp_drv);

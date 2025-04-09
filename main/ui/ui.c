@@ -179,10 +179,11 @@ lv_obj_t * ui_ImageSettingIcon;
 lv_obj_t * ui____initial_actions0;
 
 // IMAGES AND IMAGE SETS
-const lv_img_dsc_t * ui_imgset_mobilesignal[1] = {&ui_img_images_mobilesignal4_png};
-const lv_img_dsc_t * ui_imgset_setting_[1] = {&ui_img_images_setting32_32_png};
-const lv_img_dsc_t * ui_imgset_wifi[3] = {&ui_img_images_wifi1_png, &ui_img_images_wifi2_png, &ui_img_images_wifi3_png};
+const lv_img_dsc_t * ui_imgset_co[1] = {&ui_img_images_co2_png};
 const lv_img_dsc_t * ui_imgset_wifi_[1] = {&ui_img_images_wifi_44_png};
+const lv_img_dsc_t * ui_imgset_wifi_signal_[3] = {&ui_img_images_wifi_signal_1_png, &ui_img_images_wifi_signal_2_png, &ui_img_images_wifi_signal_3_png};
+const lv_img_dsc_t * ui_imgset_wifi_white_[1] = {&ui_img_images_wifi_white_24_png};
+const lv_img_dsc_t * ui_imgset_wifi_blue_[1] = {&ui_img_images_wifi_blue_24_png};
 
 ///////////////////// TEST LVGL SETTINGS ////////////////////
 #if LV_COLOR_DEPTH != 16
@@ -226,9 +227,12 @@ void ui_event_PanelSetting(lv_event_t * e)
 
 void ui_init(void)
 {
+    aqi_config_theme_t * theme_config = aqi_config_theme_get();
     lv_disp_t * dispp = lv_disp_get_default();
-    lv_theme_t * theme = lv_theme_default_init(dispp, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED),
-                                               true, LV_FONT_DEFAULT);
+    lv_theme_t * theme = lv_theme_default_init(dispp, lv_palette_main(theme_config->color_primary),
+                                                      lv_palette_main(theme_config->color_secondary),
+                                                      theme_config->dark_mode, LV_FONT_DEFAULT);
+
     lv_disp_set_theme(dispp, theme);
     ui_ScreenLoadAQI_screen_init();
     ui_ScreenSettingAQI_screen_init();
@@ -236,8 +240,8 @@ void ui_init(void)
     ui____initial_actions0 = lv_obj_create(NULL);
     lv_disp_load_scr(ui_ScreenLoadAQI);
 
-    aqi_utility_init();
-    aqi_setting_init();
     aqi_indicator_ui_init();
+    aqi_setting_init();
+    aqi_utility_init();
     aqi_sensor_init();
 }
