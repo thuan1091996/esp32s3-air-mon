@@ -1,0 +1,6 @@
+[submodule "components/lv_i18n"]
+	path = components/lv_i18n
+	url = https://github.com/lvgl/lv_i18n.git
+[submodule "components/state_machine"]
+	path = components/state_machine
+	url = https://github.com/kiishor/UML-State-Machine-in-C.git
