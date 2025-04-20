@@ -1,0 +1,48 @@
+be:
+  loading: "Chargement"
+
+  setting: "Paramètres"
+  select_language: "Sélectionner la langue"
+  select_country: "Sélectionner le pays"
+  wifi_setting: "Paramètres Wi-Fi"
+  enter_password: "Entrer le mot de passe"
+
+  language: "langue"
+  country: "pays"
+  wifi: "Wi-Fi"
+  bluetooth: "Bluetooth"
+  sound: "Son"
+  history: "Historique"
+  email_alert: "Alertes par e-mail"
+
+  button_back: "Retour"
+  button_next: "Suivant"
+  button_connect: "Connecter"
+  button_select: "Sélectionner"
+
+  country_en: "États-Unis"
+  language_en: "Anglais"
+
+  country_de: "Allemagne"
+  language_de: "Allemand"
+
+  country_es: "Espagne"
+  language_es: "Espagnol"
+
+  country_pt: "Portugal"
+  language_pt: "Portugais"
+
+  country_pl: "Pologne"
+  language_pl: "Polonais"
+
+  country_be: "Belgique"
+  language_be: "Belge"
+
+  country_tr: "Turquie"
+  language_tr: "Turc"
+
+  country_sv: "Suède"
+  language_sv: "Suédois"
+
+  country_ro: "Roumanie"
+  language_ro: "Roumain"

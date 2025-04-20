@@ -1,0 +1,48 @@
+ro:
+  loading: "Se încarcă"
+
+  setting: "Setări"
+  select_language: "Selectează Limba"
+  select_country: "Selectează Țara"
+  wifi_setting: "Setări Wi-Fi"
+  enter_password: "Introduceți parola"
+
+  language: "limbă"
+  country: "țară"
+  wifi: "Wi-Fi"
+  bluetooth: "Bluetooth"
+  sound: "Sunet"
+  history: "Istoric"
+  email_alert: "Alerte Email"
+
+  button_back: "Înapoi"
+  button_next: "Înainte"
+  button_connect: "Conectare"
+  button_select: "Selectează"
+
+  country_en: "Statele Unite"
+  language_en: "Engleză"
+
+  country_de: "Germania"
+  language_de: "Germană"
+
+  country_es: "Spania"
+  language_es: "Spaniolă"
+
+  country_pt: "Portugalia"
+  language_pt: "Portugheză"
+
+  country_pl: "Polonia"
+  language_pl: "Poloneză"
+
+  country_be: "Belgia"
+  language_be: "Belgiană"
+
+  country_tr: "Turcia"
+  language_tr: "Turcă"
+
+  country_sv: "Suedia"
+  language_sv: "Suedeză"
+
+  country_ro: "România"
+  language_ro: "Română"

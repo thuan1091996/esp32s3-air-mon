@@ -3,6 +3,11 @@
 
 #include "aqi_utility.h"
 
+#include "aqi_setting.h"
+#include "aqi_factory.h"
+
+#include "aqi_selector.h"
+
 #include "ui.h"
 
 #include "esp_wifi.h"
@@ -12,6 +17,11 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/event_groups.h"
+#include "freertos/timers.h"
+
+#include "hsm.h"
+
+#include <time.h>
 
 #include "esp_err.h"
 #include "esp_log.h"
@@ -20,60 +30,52 @@
 #define AQI_WIFI_SSID_NAME_MAX     32
 #define AQI_WIFI_SSID_PASSWORD_MAX 64
 
-#define AQI_WIFI_TASK_NAME         "AQI WiFi Task"
-#define AQI_WIFI_TASK_STACK_SIZE   (10 * 1024)
-#define AQI_WIFI_TASK_PRIORITY     5
+#define AQI_WIFI_TASK_NAME       "AQI WiFi Task"
+#define AQI_WIFI_TASK_STACK_SIZE (10 * 1024)
+#define AQI_WIFI_TASK_PRIORITY   5
+
+#define AQI_WIFI_TIMER_NAME        "AQI Wifi Timer"
+#define AQI_WIFI_TIMER_INTERVAL_MS 10000
+
+// Signal strength thresholds (in dBm)
+#define AQI_WIFI_SIGNAL_EXCELLENT -50
+#define AQI_WIFI_SIGNAL_GOOD      -70
 
 #define AQI_WIFI_NTP_SERVER_NAME   "time.google.com"
 
-#define AQI_WIFI_TITLE_NAME        "Wi-Fi Settings"
+#define AQI_WIFI_SSID_CONTAINER_SIZE   736, 160
+#define AQI_WIFI_SSID_CONTAINER_OFFSET 0, 152
 
-#define AQI_WIFI_SSID_CONTAINER_BG_OPA  82
-#define AQI_WIFI_SSID_CONTAINER_PADDING 12
-#define AQI_WIFI_SSID_CONTAINER_RADIUS  8
-#define AQI_WIFI_SSID_CONTAINER_SIZE    736, 160
-#define AQI_WIFI_SSID_CONTAINER_OFFSET  0, 84
-
-#define AQI_WIFI_SSID_ITEM_BG_COLOR_SELECT   lv_color_hex(0x30323B)
-#define AQI_WIFI_SSID_ITEM_BG_COLOR_UNSELECT lv_color_hex(0x1F2127)
-#define AQI_WIFI_SSID_ITEM_BG_OPA            255
-#define AQI_WIFI_SSID_ITEM_PADDING_LEFT      20
-#define AQI_WIFI_SSID_ITEM_PADDING_RIGHT     12
-#define AQI_WIFI_SSID_ITEM_PADDING_TOP       10
-#define AQI_WIFI_SSID_ITEM_PADDING_BOTTOM    10
-#define AQI_WIFI_SSID_ITEM_SIZE              730, 48
-#define AQI_WIFI_SSID_ITEM_OFFSET(i)         0, i * 48
+#define AQI_WIFI_SSID_ITEM_SIZE      730, 48
+#define AQI_WIFI_SSID_ITEM_OFFSET(i) 0, i * 48
 
 #define AQI_WIFI_SSID_ICON_OFFSET 0, 0
 #define AQI_WIFI_SSID_NAME_OFFSET 32, 0
 #define AQI_WIFI_SSID_LOCK_OFFSET 8, 0
 #define AQI_WIFI_SSID_TICK_OFFSET 0, 0
 
-typedef enum {
-    aqi_wifi_event_change_state   = BIT0,
-    aqi_wifi_event_change_enable  = BIT1,
-    aqi_wifi_event_all            = 0xFFFF
-} aqi_wifi_event_t;
+#define AQI_WIFI_STATE_HANDLER_DECLARE(state) \
+    static state_machine_result_t __##state##_handler(state_machine_t* const State); \
+    static state_machine_result_t __##state##_entry_handler(state_machine_t* const State); \
+    static state_machine_result_t __##state##_exit_handler(state_machine_t* const State);
+
+#define AQI_WIFI_STATE_ADD(state) \
+    [aqi_wifi_state_##state] = {\
+        .Handler = __##state##_handler, \
+        .Entry   = __##state##_entry_handler, \
+        .Exit    = __##state##_exit_handler,  \
+    }
 
 typedef enum {
-    aqi_wifi_state_none,
+    aqi_wifi_state_idle,
     aqi_wifi_state_config,
     aqi_wifi_state_scan,
-    aqi_wifi_state_scan_done,
-    aqi_wifi_state_select,
-    aqi_wifi_state_connect,
-    aqi_wifi_state_connecting,
-    aqi_wifi_state_connected,
-    aqi_wifi_state_disconnected,
-    aqi_wifi_state_time_sync
+    aqi_wifi_state_connect
 } aqi_wifi_state_t;
 
 typedef struct {
-    lv_obj_t* item;
-    lv_obj_t* icon;
-    lv_obj_t* name;
+    aqi_selector_t *selector;
     lv_obj_t* lock;
-    lv_obj_t* tick;
 } aqi_wifi_ssid_ui_t;
 
 typedef struct {
@@ -90,109 +92,72 @@ typedef struct {
 } aqi_wifi_ssid_t;
 
 typedef struct {
+    state_machine_t machine;  //!< Abstract state machine
+
     uint8_t enable;
-    uint8_t factory_setting;
     uint8_t connected;
+
     aqi_wifi_state_t state;
+
     aqi_wifi_ssid_t ssid;
     esp_netif_t* sta_netif;
+
     TaskHandle_t task_handle;
     EventGroupHandle_t event_handle;
-    lv_obj_t* screen_setting;
-    lv_obj_t* screen_change;
+
+    lv_timer_t* timer_handle;
+    int8_t last_rssi;
 } aqi_wifi_t;
-
-static const char *TAG = "AQI WIFI";
-
-static aqi_wifi_t _aqi_wifi = {0};
-
-static lv_style_t _container_style;
-static lv_style_t _ssid_item_style;
-static lv_style_t _ssid_name_style;
 
 extern bool example_lvgl_lock(int timeout_ms);
 extern void example_lvgl_unlock(void);
 
-static void __aqi_wifi_init_styles()
-{
-    // Style for SSID container
-    lv_style_init(&_container_style);
-    lv_style_set_bg_color(&_container_style, AQI_WIFI_SSID_ITEM_BG_COLOR_SELECT);
-    lv_style_set_bg_opa(&_container_style, AQI_WIFI_SSID_CONTAINER_BG_OPA);
-    lv_style_set_pad_all(&_container_style, AQI_WIFI_SSID_CONTAINER_PADDING);
-    lv_style_set_radius(&_container_style, AQI_WIFI_SSID_CONTAINER_RADIUS);
+static const char *TAG = "AQI WIFI";
 
-    // Style for SSID item
-    lv_style_init(&_ssid_item_style);
-    lv_style_set_bg_color(&_ssid_item_style, AQI_WIFI_SSID_ITEM_BG_COLOR_UNSELECT);
-    lv_style_set_bg_opa(&_ssid_item_style, AQI_WIFI_SSID_ITEM_BG_OPA);
-    lv_style_set_pad_left(&_ssid_item_style, AQI_WIFI_SSID_ITEM_PADDING_LEFT);
-    lv_style_set_pad_right(&_ssid_item_style, AQI_WIFI_SSID_ITEM_PADDING_RIGHT);
-    lv_style_set_pad_top(&_ssid_item_style, AQI_WIFI_SSID_ITEM_PADDING_TOP);
-    lv_style_set_pad_bottom(&_ssid_item_style, AQI_WIFI_SSID_ITEM_PADDING_BOTTOM);
+AQI_WIFI_STATE_HANDLER_DECLARE(idle);
+AQI_WIFI_STATE_HANDLER_DECLARE(config);
+AQI_WIFI_STATE_HANDLER_DECLARE(scan);
+AQI_WIFI_STATE_HANDLER_DECLARE(connect);
 
-    // Style for SSID name
-    lv_style_init(&_ssid_name_style);
-    lv_style_set_text_font(&_ssid_name_style, &ui_font_Poppins_Regular_18);
-}
+static const state_t _aqi_wifi_states[] = {
+    AQI_WIFI_STATE_ADD(idle),
+    AQI_WIFI_STATE_ADD(config),
+    AQI_WIFI_STATE_ADD(scan),
+    AQI_WIFI_STATE_ADD(connect),
+};
 
-static lv_obj_t *__aqi_wifi_create_image(lv_obj_t *parent, const void *src, lv_align_t align, int x_offset, int y_offset)
-{
-    lv_obj_t *img = lv_img_create(parent);
-    lv_img_set_src(img, src);
-    lv_obj_align_to(img, parent, align, x_offset, y_offset);
-    return img;
-}
-
-static lv_obj_t *__aqi_wifi_create_label(lv_obj_t *parent, const char *text, lv_align_t align, int x_offset, int y_offset)
-{
-    lv_obj_t *label = lv_label_create(parent);
-    lv_label_set_text(label, text);
-    lv_obj_align_to(label, parent, align, x_offset, y_offset);
-    lv_obj_add_style(label, &_ssid_name_style, 0);
-    return label;
-}
+static aqi_wifi_t _aqi_wifi = {0};
 
 static void __aqi_wifi_ssid_select_item_update(aqi_wifi_ssid_ui_t *ssid_ui, uint8_t select)
 {
-    lv_obj_set_style_bg_color(ssid_ui->item, select ? AQI_WIFI_SSID_ITEM_BG_COLOR_SELECT : AQI_WIFI_SSID_ITEM_BG_COLOR_UNSELECT,
-                              LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_img_set_src(ssid_ui->lock, select ? &ui_img_images_wifi_lock_select_png : &ui_img_images_wifi_lock_unselect_png);
-    select ? lv_obj_clear_flag(ssid_ui->tick, LV_OBJ_FLAG_HIDDEN) : lv_obj_add_flag(ssid_ui->tick, LV_OBJ_FLAG_HIDDEN);
+    if (select)
+    {
+        lv_img_set_src(ssid_ui->lock, &ui_img_images_wifi_lock_select_png);
+        lv_obj_clear_flag(ssid_ui->selector->tick, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_style_bg_color(ssid_ui->selector->item, AQI_SETTING_ITEM_BG_COLOR_SELECT, LV_PART_MAIN | LV_STATE_DEFAULT);
+    }
+    else
+    {
+        lv_img_set_src(ssid_ui->lock, &ui_img_images_wifi_lock_unselect_png);
+        lv_obj_add_flag(ssid_ui->selector->tick, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_style_bg_color(ssid_ui->selector->item, AQI_SETTING_ITEM_BG_COLOR_UNSELECT, LV_PART_MAIN | LV_STATE_DEFAULT);
+    }
 }
 
 static void __aqi_wifi_ssid_select_event_handler(lv_event_t *event)
 {
-    aqi_wifi_ssid_ui_t* ssid_ui = lv_event_get_user_data(event);
+    aqi_selector_t* selector = lv_event_get_user_data(event);
 
-    if (_aqi_wifi.ssid.select != ssid_ui)
+    if (_aqi_wifi.ssid.select != NULL)
     {
-        if (_aqi_wifi.ssid.select != NULL)
-            __aqi_wifi_ssid_select_item_update(_aqi_wifi.ssid.select, 0);
-
-        __aqi_wifi_ssid_select_item_update(ssid_ui, 1);
-        strncpy(_aqi_wifi.ssid.info.name, lv_label_get_text(ssid_ui->name), sizeof(_aqi_wifi.ssid.info.name));
-        _aqi_wifi.ssid.select = ssid_ui;
+        __aqi_wifi_ssid_select_item_update(_aqi_wifi.ssid.select, 0);
     }
-    else
-    {
-        __aqi_wifi_ssid_select_item_update(ssid_ui, 0);
-        _aqi_wifi.ssid.info.name[0] = '\0';
-        _aqi_wifi.ssid.select = NULL;
-    }
-}
 
-static int __aqi_wifi_create_ssid_container()
-{
-    lv_obj_t *container = lv_obj_create(ui_ContainerSettingWifi);
-    lv_obj_add_style(container, &_container_style, 0);
-    lv_obj_set_size(container, AQI_WIFI_SSID_CONTAINER_SIZE);
-    lv_obj_align(container, LV_ALIGN_TOP_MID, AQI_WIFI_SSID_CONTAINER_OFFSET);
-    lv_obj_set_scroll_dir(container, LV_DIR_VER);
+    _aqi_wifi.ssid.select = &_aqi_wifi.ssid.ui[selector->index];
+    __aqi_wifi_ssid_select_item_update(_aqi_wifi.ssid.select, 1);
 
-    _aqi_wifi.ssid.container = container;
-
-    return ESP_OK;
+    strncpy(_aqi_wifi.ssid.info.name, lv_label_get_text(_aqi_wifi.ssid.select->selector->name), sizeof(_aqi_wifi.ssid.info.name));
+    aqi_wifi_event(aqi_wifi_event_select);
 }
 
 static int __aqi_wifi_create_ssid(uint16_t ap_number, wifi_ap_record_t ap_info[])
@@ -201,157 +166,38 @@ static int __aqi_wifi_create_ssid(uint16_t ap_number, wifi_ap_record_t ap_info[]
         return ESP_FAIL;
 
     _aqi_wifi.ssid.number = ap_number;
-    __aqi_wifi_create_ssid_container();
+    _aqi_wifi.ssid.container = aqi_setting_create_container(ui_ContainerSettingWifi,
+                                                            AQI_WIFI_SSID_CONTAINER_SIZE, AQI_WIFI_SSID_CONTAINER_OFFSET);
 
     for (int i = 0; i < ap_number; i++)
     {
-        lv_obj_t *ssid_item = lv_obj_create(_aqi_wifi.ssid.container);
-        lv_obj_add_style(ssid_item, &_ssid_item_style, 0);
-        lv_obj_set_size(ssid_item, AQI_WIFI_SSID_ITEM_SIZE);
-        lv_obj_align(ssid_item, LV_ALIGN_TOP_MID, AQI_WIFI_SSID_ITEM_OFFSET(i));
-        lv_obj_clear_flag(ssid_item, LV_OBJ_FLAG_SCROLLABLE);
+        _aqi_wifi.ssid.ui[i].selector = aqi_selector_create(i, (char *)ap_info[i].ssid,
+                                                            _aqi_wifi.ssid.container, &ui_img_images_wifi_white_24_png,
+                                                            __aqi_wifi_ssid_select_event_handler);
 
-        lv_obj_t *ssid_icon = __aqi_wifi_create_image(ssid_item, &ui_img_images_wifi_white_24_png,
-                                                      LV_ALIGN_LEFT_MID, AQI_WIFI_SSID_ICON_OFFSET);
-        lv_obj_t *ssid_name = __aqi_wifi_create_label(ssid_item, (char *)ap_info[i].ssid,
-                                                      LV_ALIGN_LEFT_MID, AQI_WIFI_SSID_NAME_OFFSET);
-        lv_obj_t *ssid_lock = __aqi_wifi_create_image(ssid_name, &ui_img_images_wifi_lock_unselect_png,
-                                                      LV_ALIGN_OUT_RIGHT_MID, AQI_WIFI_SSID_LOCK_OFFSET);
-        lv_obj_t *ssid_tick = __aqi_wifi_create_image(ssid_item, &ui_img_images_tick_png,
-                                                      LV_ALIGN_RIGHT_MID, AQI_WIFI_SSID_TICK_OFFSET);
-        lv_obj_add_flag(ssid_tick, LV_OBJ_FLAG_HIDDEN);
-
-        _aqi_wifi.ssid.ui[i] = (aqi_wifi_ssid_ui_t){ssid_item, ssid_icon, ssid_name, ssid_lock, ssid_tick};
-        lv_obj_add_event_cb(ssid_item, &__aqi_wifi_ssid_select_event_handler, LV_EVENT_CLICKED, &_aqi_wifi.ssid.ui[i]);
+        _aqi_wifi.ssid.ui[i].lock = aqi_setting_create_image(_aqi_wifi.ssid.ui[i].selector->name,
+                                                             &ui_img_images_wifi_lock_unselect_png,
+                                                             LV_ALIGN_OUT_RIGHT_MID, AQI_WIFI_SSID_LOCK_OFFSET);
     }
 
     return ESP_OK;
 }
 
-static int __aqi_wifi_delete_ssid()
+static int __aqi_wifi_delete_ssid(aqi_wifi_t* aqi_wifi)
 {
-    if (_aqi_wifi.ssid.number == 0)
+    if (aqi_wifi->ssid.number == 0)
         return ESP_FAIL;
 
-    lv_obj_del(_aqi_wifi.ssid.container);
-
-    _aqi_wifi.ssid.container = NULL;
-    _aqi_wifi.ssid.select = NULL;
-    _aqi_wifi.ssid.number = 0;
-
-    return ESP_OK;
-}
-
-static int __aqi_wifi_change_screen(aqi_wifi_t *aqi_wifi)
-{
-    if (lv_scr_act() == aqi_wifi->screen_setting)
+    if (aqi_wifi->connected)
     {
-        lv_scr_load_anim(aqi_wifi->screen_change, LV_SCR_LOAD_ANIM_NONE, 0, 0, false);
+        ESP_ERROR_CHECK(esp_wifi_disconnect());
     }
 
-    return ESP_OK;
-}
+    lv_obj_del(aqi_wifi->ssid.container);
 
-static int __aqi_wifi_set_event(aqi_wifi_event_t event)
-{
-    return xEventGroupSetBits(_aqi_wifi.event_handle, event);
-}
-
-static int __aqi_wifi_set_state(aqi_wifi_state_t state)
-{
-    if (_aqi_wifi.state != state)
-    {
-        _aqi_wifi.state = state;
-        return __aqi_wifi_set_event(aqi_wifi_event_change_state);
-    }
-
-    return ESP_OK;
-}
-
-static int __aqi_wifi_state_change_handler(aqi_wifi_t *aqi_wifi)
-{
-    switch (aqi_wifi->state)
-    {
-        case aqi_wifi_state_config:
-        {
-            ESP_LOGD(TAG, "Configuring factory settings...");
-            __aqi_wifi_delete_ssid();
-        }
-        break;
-        case aqi_wifi_state_scan:
-        {
-            ESP_LOGD(TAG, "Scanning for Wi-Fi networks...");
-            lv_obj_clear_flag(ui_SwitchSettingWifiEnable, LV_OBJ_FLAG_CLICKABLE);
-            ESP_ERROR_CHECK(esp_wifi_scan_start(NULL, false));
-        }
-        break;
-        case aqi_wifi_state_scan_done:
-        {
-            ESP_LOGD(TAG, "Scan completed.");
-            uint16_t ap_number = AQI_WIFI_SSID_MAX;
-            wifi_ap_record_t ap_info[AQI_WIFI_SSID_MAX];
-            ESP_ERROR_CHECK(esp_wifi_scan_get_ap_num(&ap_number));
-            ESP_ERROR_CHECK(esp_wifi_scan_get_ap_records(&ap_number, ap_info));
-
-            __aqi_wifi_create_ssid(ap_number, ap_info);
-            lv_obj_add_flag(ui_SwitchSettingWifiEnable, LV_OBJ_FLAG_CLICKABLE);
-            aqi_wifi->state = aqi_wifi_state_select;
-        }
-        break;
-        case aqi_wifi_state_select:
-        {
-            lv_obj_clear_flag(ui_ContainerSettingMain, LV_OBJ_FLAG_HIDDEN);
-            lv_obj_add_flag(ui_ContainerWifiPassword, LV_OBJ_FLAG_HIDDEN);
-        }
-        break;
-        case aqi_wifi_state_connect:
-        {
-            ESP_LOGD(TAG, "Enter password for Wi-Fi network: %s", aqi_wifi->ssid.info.name);
-            lv_label_set_text(ui_LabelWifiSelectName, aqi_wifi->ssid.info.name);
-            lv_textarea_set_text(ui_TextWifiPasswordType, "");
-            lv_keyboard_set_mode(ui_KeyboardWifiPassword, LV_KEYBOARD_MODE_TEXT_LOWER);
-            lv_obj_add_flag(ui_ContainerSettingMain, LV_OBJ_FLAG_HIDDEN);
-            lv_obj_clear_flag(ui_ContainerWifiPassword, LV_OBJ_FLAG_HIDDEN);
-        }
-        break;
-        case aqi_wifi_state_connecting:
-        {
-            ESP_LOGD(TAG, "Connecting to Wi-Fi network: %s", aqi_wifi->ssid.info.name);
-            wifi_config_t wifi_config = {.sta = {.threshold.authmode = WIFI_AUTH_WPA2_PSK}};
-            strncpy((char *)wifi_config.sta.ssid, (char *)aqi_wifi->ssid.info.name, sizeof(wifi_config.sta.ssid));
-            strncpy((char *)wifi_config.sta.password, aqi_wifi->ssid.info.password, sizeof(wifi_config.sta.password));
-            ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config));
-            if (aqi_wifi->connected)
-            {
-                ESP_ERROR_CHECK(esp_wifi_disconnect());
-            }
-            else
-            {
-                ESP_ERROR_CHECK(esp_wifi_connect());
-            }
-        }
-        break;
-        case aqi_wifi_state_connected:
-        {
-            aqi_wifi->connected = 1;
-            ESP_ERROR_CHECK(esp_netif_dhcpc_start(aqi_wifi->sta_netif));
-            // TODO: save ssid and password to NVS
-            __aqi_wifi_delete_ssid();
-            __aqi_wifi_change_screen(aqi_wifi);
-        }
-        break;
-        case aqi_wifi_state_disconnected:
-        {
-            if (aqi_wifi->connected)
-            {
-                aqi_wifi->connected = 0;
-                ESP_ERROR_CHECK(esp_netif_dhcpc_stop(aqi_wifi->sta_netif));
-            }
-            ESP_ERROR_CHECK(esp_wifi_connect());
-        }
-        default:
-            break;
-    }
+    aqi_wifi->ssid.container = NULL;
+    aqi_wifi->ssid.select = NULL;
+    aqi_wifi->ssid.number = 0;
 
     return ESP_OK;
 }
@@ -366,21 +212,36 @@ static void __aqi_wifi_task_handler(void *pvParameters)
 
         example_lvgl_lock(-1);
 
-        if (events & aqi_wifi_event_change_state)
-        {
-            __aqi_wifi_state_change_handler(aqi_wifi);
-        }
-
-        if (events & aqi_wifi_event_change_enable)
-        {
-            ESP_LOGD(TAG, "Wi-Fi enable state changed: %d", aqi_wifi->enable);
-            __aqi_wifi_set_state(aqi_wifi->enable ? aqi_wifi_state_scan : aqi_wifi_state_config);
-        }
+        aqi_wifi->machine.Event = events;
+        dispatch_event((state_machine_t* const []){&aqi_wifi->machine}, 1);
 
         example_lvgl_unlock();
     }
 
     vTaskDelete(NULL);
+}
+
+static void __aqi_wifi_timer_handler(lv_timer_t *timer)
+{
+    wifi_ap_record_t ap_info;
+
+    if (esp_wifi_sta_get_ap_info(&ap_info) != ESP_OK)
+        return;
+
+    // Only update UI if RSSI has changed significantly (to reduce UI updates)
+    if (abs(ap_info.rssi - _aqi_wifi.last_rssi) >= 3 || _aqi_wifi.last_rssi == 0)
+    {
+        ESP_LOGD(TAG, "WiFi signal strength: %d dBm", ap_info.rssi);
+
+        _aqi_wifi.last_rssi = ap_info.rssi;
+
+        if (ap_info.rssi >= AQI_WIFI_SIGNAL_EXCELLENT)
+            lv_img_set_src(ui_ImageWifiSignal, &ui_img_images_wifi_signal_excellent_png);
+        else if (ap_info.rssi >= AQI_WIFI_SIGNAL_GOOD)
+            lv_img_set_src(ui_ImageWifiSignal, &ui_img_images_wifi_signal_good_png);
+        else
+            lv_img_set_src(ui_ImageWifiSignal, &ui_img_images_wifi_signal_poor_png);
+    }
 }
 
 static void __ui_event_handler(lv_event_t *event)
@@ -390,42 +251,30 @@ static void __ui_event_handler(lv_event_t *event)
 
     if (target == ui_SwitchSettingWifiEnable)
     {
-        aqi_wifi->enable = lv_obj_has_state(ui_SwitchSettingWifiEnable, LV_STATE_CHECKED);
-        __aqi_wifi_set_event(aqi_wifi_event_change_enable);
+        ESP_LOGI(TAG, "Wi-Fi enable switch toggled");
+        aqi_wifi_event(aqi_wifi_event_config);
     }
-    else if (target == ui_ButtonSettingNext)
+    else if (target == ui_LabelWifiPasswordShow)
     {
-        if (aqi_wifi->enable)
-        {
-            if (aqi_wifi->state == aqi_wifi_state_select && aqi_wifi->ssid.select != NULL)
-            {
-                __aqi_wifi_set_state(aqi_wifi_state_connect);
-            }
-        }
-        else
-        {
-            __aqi_wifi_change_screen(aqi_wifi);
-        }
+        bool is_checked = lv_obj_has_state(ui_LabelWifiPasswordShow, LV_STATE_CHECKED);
+        lv_label_set_text(ui_LabelWifiPasswordShow, is_checked ? LV_SYMBOL_EYE_CLOSE : LV_SYMBOL_EYE_OPEN);
+        lv_textarea_set_password_mode(ui_TextWifiPasswordType, is_checked);
     }
     else if (target == ui_ButtonWifiConnect)
     {
         strncpy(aqi_wifi->ssid.info.password, lv_textarea_get_text(ui_TextWifiPasswordType), sizeof(aqi_wifi->ssid.info.password));
         if (strlen(aqi_wifi->ssid.info.password))
         {
-            __aqi_wifi_set_state(aqi_wifi_state_connecting);
-        }
-        else
-        {
-            ESP_LOGE(TAG, "Password is empty");
-        }        
+            aqi_wifi_event(aqi_wifi_event_connect);
+        }    
     }
     else if (target == ui_ImageWifiSelectExit)
     {
-        __aqi_wifi_set_state(aqi_wifi_state_select);
+        lv_obj_clear_flag(ui_ContainerSettingMain, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(ui_ContainerWifiPassword, LV_OBJ_FLAG_HIDDEN);
     }
 }
 
-// Event handler function
 static void __wifi_event_handler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
     if (event_base == WIFI_EVENT)
@@ -433,20 +282,19 @@ static void __wifi_event_handler(void *arg, esp_event_base_t event_base, int32_t
         switch (event_id)
         {
             case WIFI_EVENT_STA_START:
-                ESP_LOGD(TAG, "Wi-Fi started.");
-                // esp_wifi_connect();
+                ESP_LOGD(TAG, "Wi-Fi started");
                 break;
             case WIFI_EVENT_SCAN_DONE:
-                ESP_LOGD(TAG, "Wi-Fi scan done.");
-                __aqi_wifi_set_state(aqi_wifi_state_scan_done);
+                ESP_LOGD(TAG, "Wi-Fi scan done");
+                aqi_wifi_event(aqi_wifi_event_scan_done);
                 break;
             case WIFI_EVENT_STA_CONNECTED:
-                ESP_LOGD(TAG, "Wi-Fi connected.");
-                __aqi_wifi_set_state(aqi_wifi_state_connected);
+                ESP_LOGD(TAG, "Wi-Fi connected");
+                aqi_wifi_event(aqi_wifi_event_connected);
                 break;
             case WIFI_EVENT_STA_DISCONNECTED:
-                ESP_LOGW(TAG, "Wi-Fi disconnected, retrying...");
-                __aqi_wifi_set_state(aqi_wifi_state_disconnected);
+                ESP_LOGW(TAG, "Wi-Fi disconnected");
+                aqi_wifi_event(aqi_wifi_event_disconnected);
                 break;
             default:
                 ESP_LOGD(TAG, "Unhandled Wi-Fi event: %d", event_id);
@@ -478,15 +326,59 @@ void __aqi_wifi_time_sync_callback(struct timeval *tv)
     ESP_LOGI(TAG, "Current time synchronized: %s", asctime(&timeinfo));
 
     aqi_utility_update_time(timeinfo);
-    __aqi_wifi_set_state(aqi_wifi_state_time_sync);
+}
+
+void __aqi_wifi_connect(aqi_wifi_t *aqi_wifi)
+{
+    ESP_LOGD(TAG, "Connecting to Wi-Fi network: %s", aqi_wifi->ssid.info.name);
+
+    wifi_config_t wifi_config = {0};
+    strncpy((char *)wifi_config.sta.ssid, aqi_wifi->ssid.info.name, sizeof(wifi_config.sta.ssid));
+    strncpy((char *)wifi_config.sta.password, aqi_wifi->ssid.info.password, sizeof(wifi_config.sta.password));
+
+    ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config));
+    ESP_ERROR_CHECK(esp_wifi_connect());
+}
+
+void __aqi_wifi_connected(aqi_wifi_t *aqi_wifi)
+{
+    ESP_LOGD(TAG, "Connected to Wi-Fi network: %s", aqi_wifi->ssid.info.name);
+
+    aqi_wifi->connected = 1;
+    ESP_ERROR_CHECK(esp_netif_dhcpc_start(aqi_wifi->sta_netif));
+    sntp_restart();
+
+    aqi_wifi->last_rssi = 0; // Reset RSSI toz force update
+    lv_obj_clear_flag(ui_ImageWifiSignal, LV_OBJ_FLAG_HIDDEN);
+    lv_timer_resume(_aqi_wifi.timer_handle);
+}
+
+void __aqi_wifi_disconnected(aqi_wifi_t *aqi_wifi)
+{
+    if (aqi_wifi->connected == 0)
+        return;
+
+    ESP_LOGW(TAG, "Disconnected from Wi-Fi network: %s", aqi_wifi->ssid.info.name);
+
+    aqi_wifi->connected = 0;
+    ESP_ERROR_CHECK(esp_netif_dhcpc_stop(aqi_wifi->sta_netif));
+
+    lv_obj_add_flag(ui_ImageWifiSignal, LV_OBJ_FLAG_HIDDEN);
+    lv_timer_pause(_aqi_wifi.timer_handle);
 }
 
 int aqi_wifi_init()
 {
+    _aqi_wifi.machine.State = &_aqi_wifi_states[aqi_wifi_state_idle];
+
     // Initialize Event Group and Task
     _aqi_wifi.event_handle = xEventGroupCreate();
     xTaskCreate(__aqi_wifi_task_handler, AQI_WIFI_TASK_NAME,
                 AQI_WIFI_TASK_STACK_SIZE, &_aqi_wifi, AQI_WIFI_TASK_PRIORITY, NULL);
+
+    // Initialize Timer
+    _aqi_wifi.timer_handle = lv_timer_create(__aqi_wifi_timer_handler, AQI_WIFI_TIMER_INTERVAL_MS, NULL);
+    lv_timer_pause(_aqi_wifi.timer_handle);
 
     // Initialize Wi-Fi
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
@@ -506,24 +398,262 @@ int aqi_wifi_init()
     esp_sntp_init();
 
     // Initialize UI elements
-    _aqi_wifi.screen_setting = ui_ScreenSettingAQI;
-    _aqi_wifi.screen_change = ui_ScreenIndicatorAQI;
-    __aqi_wifi_init_styles();
     lv_obj_add_event_cb(ui_SwitchSettingWifiEnable, &__ui_event_handler, LV_EVENT_CLICKED, &_aqi_wifi);
     lv_obj_add_event_cb(ui_ButtonWifiConnect, &__ui_event_handler, LV_EVENT_CLICKED, &_aqi_wifi);
+    lv_obj_add_event_cb(ui_LabelWifiPasswordShow, &__ui_event_handler, LV_EVENT_CLICKED, &_aqi_wifi);
     lv_obj_add_event_cb(ui_ImageWifiSelectExit, &__ui_event_handler, LV_EVENT_CLICKED, &_aqi_wifi);
-    lv_obj_add_event_cb(ui_ButtonSettingNext, &__ui_event_handler, LV_EVENT_CLICKED, &_aqi_wifi);
 
     return ESP_OK;
 }
 
-int aqi_wifi_config_factory()
+void aqi_wifi_event(aqi_wifi_event_t event)
 {
-    _aqi_wifi.factory_setting = 1;
-    lv_img_set_src(ui_ImageSettingStageWifi, &ui_img_images_stage_green_png);
-    lv_img_set_src(ui_ImageSettingTitleIcon, &ui_img_images_wifi_44_png);
-    lv_label_set_text(ui_LabelSettingTitleName, AQI_WIFI_TITLE_NAME);
+    xEventGroupSetBits(_aqi_wifi.event_handle, event);
+}
+
+/********************************** Idle State **********************************/
+static state_machine_result_t __idle_entry_handler(state_machine_t* const pState)
+{
+    ESP_LOGI(TAG, "Entering to idle state");
+
+    lv_obj_add_flag(ui_ContainerSettingMain, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_add_flag(ui_ContainerSettingWifi, LV_OBJ_FLAG_HIDDEN);
+
+    return EVENT_HANDLED;
+}
+
+static state_machine_result_t __idle_handler(state_machine_t* const pState)
+{
+    aqi_wifi_t* const aqi_wifi = (aqi_wifi_t*)pState;
+
+    switch (pState->Event)
+    {
+        case aqi_wifi_event_config:
+        {
+            switch_state(pState, &_aqi_wifi_states[aqi_wifi_state_config]);
+            return TRIGGERED_TO_SELF;
+        }
+
+        case aqi_wifi_event_connected:
+        {
+            __aqi_wifi_connected(aqi_wifi);
+            break;
+        }
+
+        case aqi_wifi_event_disconnected:
+        {
+            __aqi_wifi_disconnected(aqi_wifi);
+
+            ESP_LOGW(TAG, "Retrying connection to Wi-Fi network: %s", aqi_wifi->ssid.info.name);
+
+            ESP_ERROR_CHECK(esp_wifi_connect());
+            break;
+        }
+
+        default:
+            return EVENT_UN_HANDLED;
+    }
+    return EVENT_HANDLED;
+}
+
+static state_machine_result_t __idle_exit_handler(state_machine_t* const pState)
+{
+    ESP_LOGI(TAG, "Exiting from idle state");
+
+    lv_obj_clear_flag(ui_ContainerSettingMain, LV_OBJ_FLAG_HIDDEN);
     lv_obj_clear_flag(ui_ContainerSettingWifi, LV_OBJ_FLAG_HIDDEN);
-    lv_event_send(ui_SwitchSettingWifiEnable, LV_EVENT_CLICKED, NULL);
-    return ESP_OK;
+
+    return EVENT_HANDLED;
+}
+
+/********************************** Config State **********************************/
+static state_machine_result_t __config_entry_handler(state_machine_t* const pState)
+{
+    ESP_LOGI(TAG, "Entering to config state");
+
+    aqi_factory_button_clickable(true);
+
+    return EVENT_HANDLED;
+}
+
+static state_machine_result_t __config_handler(state_machine_t* const pState)
+{
+    aqi_wifi_t* const aqi_wifi = (aqi_wifi_t*)pState;
+
+    switch (pState->Event)
+    {
+        case aqi_wifi_event_config:
+        {
+            if (lv_obj_has_state(ui_SwitchSettingWifiEnable, LV_STATE_CHECKED))
+            {
+                return switch_state(pState, &_aqi_wifi_states[aqi_wifi_state_scan]);
+            }
+            else
+            {
+                __aqi_wifi_delete_ssid(aqi_wifi);
+                aqi_factory_button_clickable(true);
+                break;
+            }
+        }
+
+        case aqi_wifi_event_select:
+        {
+            ESP_LOGD(TAG, "Enter password for Wi-Fi network: %s", aqi_wifi->ssid.info.name);
+
+            lv_label_set_text(ui_LabelWifiSelectName, aqi_wifi->ssid.info.name);
+            lv_label_set_text(ui_LabelWifiPasswordShow, LV_SYMBOL_EYE_CLOSE);
+
+            lv_textarea_set_password_mode(ui_TextWifiPasswordType, true);
+            lv_textarea_set_text(ui_TextWifiPasswordType, "");
+            lv_keyboard_set_mode(ui_KeyboardWifiPassword, LV_KEYBOARD_MODE_TEXT_LOWER);
+            
+            lv_obj_add_flag(ui_ContainerSettingMain, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_clear_flag(ui_ContainerWifiPassword, LV_OBJ_FLAG_HIDDEN);
+            break;
+        }
+
+        case aqi_wifi_event_connect:
+        {
+            if (aqi_wifi->connected)
+            {
+                ESP_ERROR_CHECK(esp_wifi_disconnect());
+            }
+            __aqi_wifi_connect(aqi_wifi);
+
+            return switch_state(pState, &_aqi_wifi_states[aqi_wifi_state_connect]);
+        }
+
+        case aqi_wifi_event_connected:
+        {
+            __aqi_wifi_connected(aqi_wifi);
+            break;
+        }
+
+        case aqi_wifi_event_disconnected:
+        {
+            __aqi_wifi_disconnected(aqi_wifi);
+            break;
+        }
+
+        case aqi_wifi_event_setting_done:
+        {
+            ESP_LOGI(TAG, "Finishing factory configuration");
+            return switch_state(pState, &_aqi_wifi_states[aqi_wifi_state_idle]);
+        }
+
+        default:
+            return EVENT_UN_HANDLED;
+    }
+    return EVENT_HANDLED;
+}
+
+static state_machine_result_t __config_exit_handler(state_machine_t* const pState)
+{
+    ESP_LOGI(TAG, "Exiting from config state");
+
+    aqi_factory_button_clickable(false);
+
+    return EVENT_HANDLED;
+}
+
+/********************************** Scan State **********************************/
+static state_machine_result_t __scan_entry_handler(state_machine_t* const pState)
+{
+    ESP_LOGI(TAG, "Entering to scan state");
+
+    lv_obj_clear_flag(ui_SwitchSettingWifiEnable, LV_OBJ_FLAG_CLICKABLE);
+
+    ESP_LOGI(TAG, "Starting Wi-Fi scan");
+    ESP_ERROR_CHECK(esp_wifi_scan_start(NULL, false));
+
+    return EVENT_HANDLED;
+}
+
+static state_machine_result_t __scan_handler(state_machine_t* const pState)
+{
+    switch (pState->Event)
+    {
+        case aqi_wifi_event_scan_done:
+        {
+            ESP_LOGD(TAG, "Scan completed");
+
+            uint16_t ap_number = AQI_WIFI_SSID_MAX;
+            wifi_ap_record_t ap_info[AQI_WIFI_SSID_MAX];
+            ESP_ERROR_CHECK(esp_wifi_scan_get_ap_num(&ap_number));
+            ESP_ERROR_CHECK(esp_wifi_scan_get_ap_records(&ap_number, ap_info));
+
+            __aqi_wifi_create_ssid(ap_number, ap_info);
+            return switch_state(pState, &_aqi_wifi_states[aqi_wifi_state_config]);
+        }
+
+        default:
+            return EVENT_UN_HANDLED;
+    }
+    return EVENT_HANDLED;
+}
+
+static state_machine_result_t __scan_exit_handler(state_machine_t* const pState)
+{
+    ESP_LOGI(TAG, "Exiting from scan state");
+
+    lv_obj_add_flag(ui_SwitchSettingWifiEnable, LV_OBJ_FLAG_CLICKABLE);
+
+    return EVENT_HANDLED;
+}
+
+/********************************** Connect State **********************************/
+static state_machine_result_t __connect_entry_handler(state_machine_t* const pState)
+{
+    ESP_LOGI(TAG, "Entering to connect state");
+
+    lv_obj_clear_flag(ui_ButtonWifiConnect, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_clear_flag(ui_ImageWifiSelectExit, LV_OBJ_FLAG_CLICKABLE);
+
+    return EVENT_HANDLED;
+}
+
+static state_machine_result_t __connect_handler(state_machine_t* const pState)
+{
+    aqi_wifi_t* const aqi_wifi = (aqi_wifi_t*)pState;
+
+    switch (pState->Event)
+    {
+        case aqi_wifi_event_connected:
+        {
+            __aqi_wifi_connected(aqi_wifi);
+
+            lv_obj_clear_flag(ui_ContainerSettingMain, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_add_flag(ui_ContainerWifiPassword, LV_OBJ_FLAG_HIDDEN);
+
+            // TODO: save ssid and password to NVS
+            return switch_state(pState, &_aqi_wifi_states[aqi_wifi_state_config]);
+        }
+
+        case aqi_wifi_event_disconnected:
+        {
+            if (aqi_wifi->connected)
+            {
+                __aqi_wifi_disconnected(aqi_wifi);
+                break;
+            }
+            else
+            {
+                return switch_state(pState, &_aqi_wifi_states[aqi_wifi_state_config]);
+            }
+        }
+
+        default:
+            return EVENT_UN_HANDLED;
+    }
+    return EVENT_HANDLED;
+}
+
+static state_machine_result_t __connect_exit_handler(state_machine_t* const pState)
+{
+    ESP_LOGI(TAG, "Exiting from connect state");
+
+    lv_obj_add_flag(ui_ButtonWifiConnect, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_add_flag(ui_ImageWifiSelectExit, LV_OBJ_FLAG_CLICKABLE);
+
+    return EVENT_HANDLED;
 }

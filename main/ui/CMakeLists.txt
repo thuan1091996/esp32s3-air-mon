@@ -6,13 +6,14 @@ SET(SOURCES screens/ui_ScreenLoadAQI.c
     ui_helpers.c
     ui_events.c
     images/ui_img_images_mobilesignal_png.c
-    images/ui_img_images_wifi_signal_3_png.c
     images/ui_img_images_batteryoutline_png.c
     images/ui_img_images_load_spinner_png.c
     images/ui_img_images_load_en_us_png.c
+    images/ui_img_images_language_png.c
+    images/ui_img_images_country_png.c
     images/ui_img_images_wifi_44_png.c
-    images/ui_img_images_stage_grey_png.c
     images/ui_img_images_wifi_blue_24_png.c
+    images/ui_img_images_stage_grey_png.c
     images/ui_img_images_exit_png.c
     images/ui_img_images_wifi_lock_select_png.c
     images/ui_img_images_pm_png.c
@@ -25,6 +26,15 @@ SET(SOURCES screens/ui_ScreenLoadAQI.c
     images/ui_img_images_co2_bad_png.c
     images/ui_img_images_co2_good_png.c
     images/ui_img_images_co2_warning_png.c
+    images/ui_img_images_flag_be_png.c
+    images/ui_img_images_flag_de_png.c
+    images/ui_img_images_flag_en_png.c
+    images/ui_img_images_flag_es_png.c
+    images/ui_img_images_flag_pl_png.c
+    images/ui_img_images_flag_pt_png.c
+    images/ui_img_images_flag_ro_png.c
+    images/ui_img_images_flag_sv_png.c
+    images/ui_img_images_flag_tr_png.c
     images/ui_img_images_pm_bad_png.c
     images/ui_img_images_pm_warning_png.c
     images/ui_img_images_rh_bad_png.c
@@ -39,11 +49,10 @@ SET(SOURCES screens/ui_ScreenLoadAQI.c
     images/ui_img_images_tvoc_good_png.c
     images/ui_img_images_tvoc_warning_png.c
     images/ui_img_images_wifi_lock_unselect_png.c
-    images/ui_img_images_wifi_signal_1_png.c
-    images/ui_img_images_wifi_signal_2_png.c
+    images/ui_img_images_wifi_signal_excellent_png.c
+    images/ui_img_images_wifi_signal_good_png.c
+    images/ui_img_images_wifi_signal_poor_png.c
     images/ui_img_images_wifi_white_24_png.c
-    images/ui_img_images_stage_green_png.c
-    images/ui_img_images_stage_grey_png.c
     fonts/ui_font_OpenSans_Regular_14.c
     fonts/ui_font_OpenSans_Regular_16.c
     fonts/ui_font_Poppins_ExtraLight_116.c
@@ -51,7 +60,6 @@ SET(SOURCES screens/ui_ScreenLoadAQI.c
     fonts/ui_font_Poppins_Light_20.c
     fonts/ui_font_Poppins_Light_24.c
     fonts/ui_font_Poppins_Light_36.c
-    fonts/ui_font_Poppins_Regular_16.c
     fonts/ui_font_Poppins_Regular_18.c)
 
 add_library(ui ${SOURCES})

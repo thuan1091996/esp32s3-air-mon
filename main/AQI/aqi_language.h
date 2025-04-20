@@ -10,8 +10,6 @@ extern "C" {
 
 int aqi_language_init();
 
-int aqi_language_config_factory();
-
 #ifdef __cplusplus
 } /*extern "C"*/
 #endif

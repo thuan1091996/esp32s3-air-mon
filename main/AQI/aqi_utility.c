@@ -37,7 +37,7 @@ static void __aqi_utility_task_handler(void *pvParameters)
 
         if (timeinfo.tm_sec == 0)   // Update time every minute
         {
-            ESP_LOGI(TAG, "New minute started:%s", asctime(&timeinfo));
+            ESP_LOGI(TAG, "New minute started: %s", asctime(&timeinfo));
             aqi_utility_update_time(timeinfo);
         }
     

@@ -1,0 +1,48 @@
+sv:
+  loading: "Laddar"
+
+  setting: "Inställningar"
+  select_language: "Välj språk"
+  select_country: "Välj land"
+  wifi_setting: "Wi-Fi-inställningar"
+  enter_password: "Ange lösenord"
+
+  language: "språk"
+  country: "land"
+  wifi: "Wi-Fi"
+  bluetooth: "Bluetooth"
+  sound: "Ljud"
+  history: "Historik"
+  email_alert: "E-postaviseringar"
+
+  button_back: "Tillbaka"
+  button_next: "Nästa"
+  button_connect: "Anslut"
+  button_select: "Välj"
+
+  country_en: "USA"
+  language_en: "Engelska"
+
+  country_de: "Tyskland"
+  language_de: "Tyska"
+
+  country_es: "Spanien"
+  language_es: "Spanska"
+
+  country_pt: "Portugal"
+  language_pt: "Portugisiska"
+
+  country_pl: "Polen"
+  language_pl: "Polska"
+
+  country_be: "Belgien"
+  language_be: "Belgiska"
+
+  country_tr: "Turkiet"
+  language_tr: "Turkiska"
+
+  country_sv: "Sverige"
+  language_sv: "Svenska"
+
+  country_ro: "Rumänien"
+  language_ro: "Rumänska"

@@ -79,7 +79,7 @@ char* __aqi_config_json_pack(aqi_config_t config)
     }
     else
     {
-        ESP_LOGI(TAG, "JSON packed successfully: %lld\n%s", strlen(json_string), json_string);
+        ESP_LOGI(TAG, "JSON packed successfully: %ld\n%s", strlen(json_string), json_string);
     }
 
     // Free the JSON object (frees all child objects too)

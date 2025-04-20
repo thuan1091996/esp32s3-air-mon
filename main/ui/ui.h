@@ -12,6 +12,7 @@ extern "C" {
 
 #include "lvgl.h"
 
+#include "lv_i18n.h"
 #include "ui_helpers.h"
 #include "ui_events.h"
 
@@ -32,8 +33,8 @@ extern lv_obj_t * ui_LabelTime;
 extern lv_obj_t * ui_ContainerStatusRight;
 extern lv_obj_t * ui_ContainerMobileSignal;
 extern lv_obj_t * ui_ImageMobileSignal;
-extern lv_obj_t * ui_ContainerWifi;
-extern lv_obj_t * ui_ImageWifi;
+extern lv_obj_t * ui_ContainerWifiSignal;
+extern lv_obj_t * ui_ImageWifiSignal;
 extern lv_obj_t * ui_ContainerBattery;
 extern lv_obj_t * ui_ImageBattery;
 extern lv_obj_t * ui_BarBattery;
@@ -50,10 +51,23 @@ void ui_ScreenSettingAQI_screen_init(void);
 extern lv_obj_t * ui_ScreenSettingAQI;
 extern lv_obj_t * ui_ContainerSetting;
 extern lv_obj_t * ui_ContainerSettingMain;
-extern lv_obj_t * ui_ContainerSettingTitle;
-extern lv_obj_t * ui_ContainerSettingTitleIcon;
-extern lv_obj_t * ui_ImageSettingTitleIcon;
-extern lv_obj_t * ui_LabelSettingTitleName;
+extern lv_obj_t * ui_ContainerSettingLanguage;
+extern lv_obj_t * ui_ContainerSettingLanguageTitle;
+extern lv_obj_t * ui_ImageSettingLanguageTitleIcon;
+extern lv_obj_t * ui_LabelSettingLanguageTitleName;
+extern lv_obj_t * ui_ContainerSettingCountry;
+extern lv_obj_t * ui_ContainerSettingCountryTitle;
+extern lv_obj_t * ui_ImageSettingCountryTitleIcon;
+extern lv_obj_t * ui_LabelSettingCountryTitleName;
+extern lv_obj_t * ui_ContainerSettingWifi;
+extern lv_obj_t * ui_ContainerSettingWifiTitle;
+extern lv_obj_t * ui_ImageSettingWifiTitleIcon;
+extern lv_obj_t * ui_LabelSettingWifiTitleName;
+extern lv_obj_t * ui_ContainerSettingWifiEnable;
+extern lv_obj_t * ui_ContainerSettingWifiEnableIcon;
+extern lv_obj_t * ui_ImageSettingWifiEnableIcon;
+extern lv_obj_t * ui_LabelSettingWifiEnable;
+extern lv_obj_t * ui_SwitchSettingWifiEnable;
 extern lv_obj_t * ui_ContainerSettingButton;
 extern lv_obj_t * ui_ButtonSettingBack;
 extern lv_obj_t * ui_LabelSettingBackButton;
@@ -63,12 +77,6 @@ extern lv_obj_t * ui_ContainerSettingStage;
 extern lv_obj_t * ui_ImageSettingStageLanguage;
 extern lv_obj_t * ui_ImageSettingStageCountry;
 extern lv_obj_t * ui_ImageSettingStageWifi;
-extern lv_obj_t * ui_ContainerSettingWifi;
-extern lv_obj_t * ui_ContainerSettingWifiEnable;
-extern lv_obj_t * ui_ContainerSettingWifiEnableIcon;
-extern lv_obj_t * ui_ImageSettingWifiEnableIcon;
-extern lv_obj_t * ui_LabelSettingWifiEnable;
-extern lv_obj_t * ui_SwitchSettingWifiEnable;
 extern lv_obj_t * ui_ContainerWifiPassword;
 extern lv_obj_t * ui_ContainerWifiSelect;
 extern lv_obj_t * ui_ContainerWifiSelectIcon;
@@ -78,6 +86,7 @@ extern lv_obj_t * ui_ImageWifiSelectExit;
 extern lv_obj_t * ui_ContainerWifiPasswordType;
 extern lv_obj_t * ui_ImageWifiPasswordLock;
 extern lv_obj_t * ui_TextWifiPasswordType;
+extern lv_obj_t * ui_LabelWifiPasswordShow;
 extern lv_obj_t * ui_ButtonWifiConnect;
 extern lv_obj_t * ui_LabelWifiConnectButton;
 extern lv_obj_t * ui_KeyboardWifiPassword;
@@ -191,13 +200,14 @@ extern lv_obj_t * ui____initial_actions0;
 
 // IMAGES AND IMAGE SETS
 LV_IMG_DECLARE(ui_img_images_mobilesignal_png);    // assets/Images/MobileSignal.png
-LV_IMG_DECLARE(ui_img_images_wifi_signal_3_png);    // assets/Images/Wifi_Signal_3.png
 LV_IMG_DECLARE(ui_img_images_batteryoutline_png);    // assets/Images/BatteryOutline.png
 LV_IMG_DECLARE(ui_img_images_load_spinner_png);    // assets/Images/Load_Spinner.png
 LV_IMG_DECLARE(ui_img_images_load_en_us_png);    // assets/Images/Load_en_US.png
+LV_IMG_DECLARE(ui_img_images_language_png);    // assets/Images/Language.png
+LV_IMG_DECLARE(ui_img_images_country_png);    // assets/Images/Country.png
 LV_IMG_DECLARE(ui_img_images_wifi_44_png);    // assets/Images/Wifi_44.png
-LV_IMG_DECLARE(ui_img_images_stage_grey_png);    // assets/Images/stage_grey.png
 LV_IMG_DECLARE(ui_img_images_wifi_blue_24_png);    // assets/Images/Wifi_Blue_24.png
+LV_IMG_DECLARE(ui_img_images_stage_grey_png);    // assets/Images/Stage_Grey.png
 LV_IMG_DECLARE(ui_img_images_exit_png);    // assets/Images/Exit.png
 LV_IMG_DECLARE(ui_img_images_wifi_lock_select_png);    // assets/Images/Wifi_Lock_Select.png
 LV_IMG_DECLARE(ui_img_images_pm_png);    // assets/Images/PM.png
@@ -210,12 +220,21 @@ LV_IMG_DECLARE(ui_img_images_setting_png);    // assets/Images/Setting.png
 LV_IMG_DECLARE(ui_img_images_co2_bad_png);    // assets/Images/CO2_Bad.png
 LV_IMG_DECLARE(ui_img_images_co2_good_png);    // assets/Images/CO2_Good.png
 LV_IMG_DECLARE(ui_img_images_co2_warning_png);    // assets/Images/CO2_Warning.png
+LV_IMG_DECLARE(ui_img_images_flag_be_png);    // assets/Images/Flag_BE.png
+LV_IMG_DECLARE(ui_img_images_flag_de_png);    // assets/Images/Flag_DE.png
+LV_IMG_DECLARE(ui_img_images_flag_en_png);    // assets/Images/Flag_EN.png
+LV_IMG_DECLARE(ui_img_images_flag_es_png);    // assets/Images/Flag_ES.png
+LV_IMG_DECLARE(ui_img_images_flag_pl_png);    // assets/Images/Flag_PL.png
+LV_IMG_DECLARE(ui_img_images_flag_pt_png);    // assets/Images/Flag_PT.png
+LV_IMG_DECLARE(ui_img_images_flag_ro_png);    // assets/Images/Flag_RO.png
+LV_IMG_DECLARE(ui_img_images_flag_sv_png);    // assets/Images/Flag_SV.png
+LV_IMG_DECLARE(ui_img_images_flag_tr_png);    // assets/Images/Flag_TR.png
 LV_IMG_DECLARE(ui_img_images_pm_bad_png);    // assets/Images/PM_Bad.png
 LV_IMG_DECLARE(ui_img_images_pm_warning_png);    // assets/Images/PM_Warning.png
 LV_IMG_DECLARE(ui_img_images_rh_bad_png);    // assets/Images/RH_Bad.png
 LV_IMG_DECLARE(ui_img_images_rh_good_png);    // assets/Images/RH_Good.png
 LV_IMG_DECLARE(ui_img_images_rh_warning_png);    // assets/Images/RH_Warning.png
-LV_IMG_DECLARE(ui_img_images_stage_green_png);    // assets/Images/stage_green.png
+LV_IMG_DECLARE(ui_img_images_stage_green_png);    // assets/Images/Stage_Green.png
 LV_IMG_DECLARE(ui_img_images_temp_bad_png);    // assets/Images/TEMP_Bad.png
 LV_IMG_DECLARE(ui_img_images_temp_good_png);    // assets/Images/TEMP_Good.png
 LV_IMG_DECLARE(ui_img_images_temp_warning_png);    // assets/Images/TEMP_Warning.png
@@ -224,11 +243,10 @@ LV_IMG_DECLARE(ui_img_images_tvoc_bad_png);    // assets/Images/TVOC_Bad.png
 LV_IMG_DECLARE(ui_img_images_tvoc_good_png);    // assets/Images/TVOC_Good.png
 LV_IMG_DECLARE(ui_img_images_tvoc_warning_png);    // assets/Images/TVOC_Warning.png
 LV_IMG_DECLARE(ui_img_images_wifi_lock_unselect_png);    // assets/Images/Wifi_Lock_Unselect.png
-LV_IMG_DECLARE(ui_img_images_wifi_signal_1_png);    // assets/Images/Wifi_Signal_1.png
-LV_IMG_DECLARE(ui_img_images_wifi_signal_2_png);    // assets/Images/Wifi_Signal_2.png
+LV_IMG_DECLARE(ui_img_images_wifi_signal_excellent_png);    // assets/Images/Wifi_Signal_Excellent.png
+LV_IMG_DECLARE(ui_img_images_wifi_signal_good_png);    // assets/Images/Wifi_Signal_Good.png
+LV_IMG_DECLARE(ui_img_images_wifi_signal_poor_png);    // assets/Images/Wifi_Signal_Poor.png
 LV_IMG_DECLARE(ui_img_images_wifi_white_24_png);    // assets/Images/Wifi_White_24.png
-LV_IMG_DECLARE(ui_img_images_stage_green_png);    // assets/Images/Stage_Green.png
-LV_IMG_DECLARE(ui_img_images_stage_grey_png);    // assets/Images/Stage_Grey.png
 
 // FONTS
 LV_FONT_DECLARE(ui_font_OpenSans_Regular_14);
@@ -238,7 +256,6 @@ LV_FONT_DECLARE(ui_font_Poppins_Light_18);
 LV_FONT_DECLARE(ui_font_Poppins_Light_20);
 LV_FONT_DECLARE(ui_font_Poppins_Light_24);
 LV_FONT_DECLARE(ui_font_Poppins_Light_36);
-LV_FONT_DECLARE(ui_font_Poppins_Regular_16);
 LV_FONT_DECLARE(ui_font_Poppins_Regular_18);
 
 // UI INIT

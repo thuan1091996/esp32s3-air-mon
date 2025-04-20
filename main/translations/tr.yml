@@ -1,0 +1,48 @@
+tr:
+  loading: "Yükleniyor"
+
+  setting: "Ayarlar"
+  select_language: "Dil Seç"
+  select_country: "Ülke Seç"
+  wifi_setting: "Wi-Fi Ayarları"
+  enter_password: "Şifre Gir"
+
+  language: "dil"
+  country: "ülke"
+  wifi: "Wi-Fi"
+  bluetooth: "Bluetooth"
+  sound: "Ses"
+  history: "Geçmiş"
+  email_alert: "E-posta Uyarıları"
+
+  button_back: "Geri"
+  button_next: "İleri"
+  button_connect: "Bağlan"
+  button_select: "Seç"
+
+  country_en: "Amerika Birleşik Devletleri"
+  language_en: "İngilizce"
+
+  country_de: "Almanya"
+  language_de: "Almanca"
+
+  country_es: "İspanya"
+  language_es: "İspanyolca"
+
+  country_pt: "Portekiz"
+  language_pt: "Portekizce"
+
+  country_pl: "Polonya"
+  language_pl: "Lehçe"
+
+  country_be: "Belçika"
+  language_be: "Belçika dili"
+
+  country_tr: "Türkiye"
+  language_tr: "Türkçe"
+
+  country_sv: "İsveç"
+  language_sv: "İsveççe"
+
+  country_ro: "Romanya"
+  language_ro: "Romence"

@@ -477,7 +477,7 @@ void ui_ScreenIndicatorAQI_screen_init(void)
     ui_ContainerSelectAQI = lv_obj_create(ui_ContainerMain);
     lv_obj_remove_style_all(ui_ContainerSelectAQI);
     lv_obj_set_width(ui_ContainerSelectAQI, 373);
-    lv_obj_set_height(ui_ContainerSelectAQI, 172);
+    lv_obj_set_height(ui_ContainerSelectAQI, 174);
     lv_obj_set_x(ui_ContainerSelectAQI, 0);
     lv_obj_set_y(ui_ContainerSelectAQI, 122);
     lv_obj_set_align(ui_ContainerSelectAQI, LV_ALIGN_TOP_MID);
@@ -487,9 +487,7 @@ void ui_ScreenIndicatorAQI_screen_init(void)
 
     ui_LabelValueSelectAQI = lv_label_create(ui_ContainerSelectAQI);
     lv_obj_set_width(ui_LabelValueSelectAQI, 373);
-    lv_obj_set_height(ui_LabelValueSelectAQI, 130);
-    lv_obj_set_x(ui_LabelValueSelectAQI, 0);
-    lv_obj_set_y(ui_LabelValueSelectAQI, -24);
+    lv_obj_set_height(ui_LabelValueSelectAQI, 96);
     lv_obj_set_align(ui_LabelValueSelectAQI, LV_ALIGN_TOP_MID);
     lv_label_set_text(ui_LabelValueSelectAQI, "0");
     lv_obj_set_style_text_color(ui_LabelValueSelectAQI, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -500,10 +498,8 @@ void ui_ScreenIndicatorAQI_screen_init(void)
     ui_ContaierInforSelectAQI = lv_obj_create(ui_ContainerSelectAQI);
     lv_obj_remove_style_all(ui_ContaierInforSelectAQI);
     lv_obj_set_width(ui_ContaierInforSelectAQI, 373);
-    lv_obj_set_height(ui_ContaierInforSelectAQI, LV_SIZE_CONTENT);    /// 62
-    lv_obj_set_x(ui_ContaierInforSelectAQI, 0);
-    lv_obj_set_y(ui_ContaierInforSelectAQI, 112);
-    lv_obj_set_align(ui_ContaierInforSelectAQI, LV_ALIGN_TOP_MID);
+    lv_obj_set_height(ui_ContaierInforSelectAQI, 62);
+    lv_obj_set_align(ui_ContaierInforSelectAQI, LV_ALIGN_BOTTOM_MID);
     lv_obj_clear_flag(ui_ContaierInforSelectAQI, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
     ui_ContainerLevelSelectAQI = lv_obj_create(ui_ContaierInforSelectAQI);

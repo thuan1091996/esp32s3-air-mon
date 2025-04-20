@@ -10,7 +10,7 @@ extern "C" {
 
 int aqi_country_init();
 
-int aqi_country_config_factory();
+int aqi_country_language_update();
 
 #ifdef __cplusplus
 } /*extern "C"*/

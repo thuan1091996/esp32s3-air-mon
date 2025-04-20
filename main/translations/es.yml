@@ -1,0 +1,48 @@
+es:
+  loading: "Cargando"
+
+  setting: "Configuración"
+  select_language: "Seleccionar Idioma"
+  select_country: "Seleccionar País"
+  wifi_setting: "Configuración de Wi-Fi"
+  enter_password: "Introducir Contraseña"
+
+  language: "idioma"
+  country: "país"
+  wifi: "Wi-Fi"
+  bluetooth: "Bluetooth"
+  sound: "Sonido"
+  history: "Historial"
+  email_alert: "Alertas de Correo"
+
+  button_back: "Atrás"
+  button_next: "Siguiente"
+  button_connect: "Conectar"
+  button_select: "Seleccionar"
+
+  country_en: "Estados Unidos"
+  language_en: "Inglés"
+
+  country_de: "Alemania"
+  language_de: "Alemán"
+
+  country_es: "España"
+  language_es: "Español"
+
+  country_pt: "Portugal"
+  language_pt: "Portugués"
+
+  country_pl: "Polonia"
+  language_pl: "Polaco"
+
+  country_be: "Bélgica"
+  language_be: "Belga"
+
+  country_tr: "Turquía"
+  language_tr: "Turco"
+
+  country_sv: "Suecia"
+  language_sv: "Sueco"
+
+  country_ro: "Rumanía"
+  language_ro: "Rumano"
