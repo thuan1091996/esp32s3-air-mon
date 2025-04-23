@@ -30,22 +30,22 @@ static void __aqi_sensor_measurement_task(void *pvParameters)
 {
     while (true)
     {
-        // if (apc1_measurement() == ESP_OK)
-        // {
-        //     example_lvgl_lock(-1);
-        //     aqi_indicator_ui_data_show( apc1_get_pm1_0(),
-        //                                 apc1_get_pm2_5(),
-        //                                 apc1_get_pm10(),
-        //                                 apc1_get_ECO2(),
-        //                                 apc1_get_T_comp(),
-        //                                 apc1_get_RH_comp(),
-        //                                 apc1_get_TVOC());
-        //     example_lvgl_unlock();
-        // }
-        // else
-        // {
-        //     ESP_LOGE(TAG, "%s", _aqi_sensor.config->error_message);
-        // }
+        if (apc1_measurement() == ESP_OK)
+        {
+            example_lvgl_lock(-1);
+            aqi_indicator_ui_data_show( apc1_get_pm1_0(),
+                                        apc1_get_pm2_5(),
+                                        apc1_get_pm10(),
+                                        apc1_get_ECO2(),
+                                        apc1_get_T_comp(),
+                                        apc1_get_RH_comp(),
+                                        apc1_get_TVOC());
+            example_lvgl_unlock();
+        }
+        else
+        {
+            ESP_LOGE(TAG, "%s", _aqi_sensor.config->error_message);
+        }
 
         vTaskDelay(pdMS_TO_TICKS(_aqi_sensor.config->period_ms));
     }
