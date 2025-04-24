@@ -24,6 +24,8 @@
 
 #include "aqi_config.h"
 
+extern int aqi_wifi_stack_init();
+
 //--------------------------------------------------------
 //main
 
@@ -39,6 +41,8 @@ void app_main(void)
         ret = nvs_flash_init();
     }
     ESP_ERROR_CHECK(ret);
+
+    aqi_wifi_stack_init();
 
 	display();
 }

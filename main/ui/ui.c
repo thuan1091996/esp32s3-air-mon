@@ -39,6 +39,59 @@ void ui_ScreenSettingAQI_screen_init(void);
 lv_obj_t * ui_ScreenSettingAQI;
 lv_obj_t * ui_ContainerSetting;
 lv_obj_t * ui_ContainerSettingMain;
+lv_obj_t * ui_ContainerSettingTab;
+lv_obj_t * ui_ContainerSettingTabHeader;
+lv_obj_t * ui_ImageSettingTabSwitchBack;
+lv_obj_t * ui_LabelSettingTabTitleName;
+lv_obj_t * ui_SwitchSettingTabDarkMode;
+lv_obj_t * ui_ContainerSettingTabBody;
+lv_obj_t * ui_ContainerSettingTabBody1;
+lv_obj_t * ui_ContainerSettingTabSound;
+lv_obj_t * ui_ContainerSettingTabSoundIcon;
+lv_obj_t * ui_ImageSettingTabSoundIcon;
+lv_obj_t * ui_LabelSettingTabSoundName;
+lv_obj_t * ui_SwitchSettingTabSoundEnable;
+lv_obj_t * ui_ContainerSettingTabWifi;
+lv_obj_t * ui_ContainerSettingTabWifiIcon;
+lv_obj_t * ui_ImageSettingTabWifiIcon;
+lv_obj_t * ui_LabelSettingTabWifiName;
+lv_obj_t * ui_SwitchSettingTabWifiEnable;
+lv_obj_t * ui_ContainerSettingTabHistory;
+lv_obj_t * ui_ContainerSettingTabHistoryIcon;
+lv_obj_t * ui_ImageSettingTabHistoryIcon;
+lv_obj_t * ui_LabelSettingTabHistoryName;
+lv_obj_t * ui_SwitchSettingTabHistoryEnable;
+lv_obj_t * ui_ContainerSettingTabBody2;
+lv_obj_t * ui_ContainerSettingTabLanguage;
+lv_obj_t * ui_ImageSettingTabLanguageIcon;
+lv_obj_t * ui_LabelSettingTabLanguageName;
+lv_obj_t * ui_ImageSettingTabLanguageChange;
+lv_obj_t * ui_ContainerSettingTabCountry;
+lv_obj_t * ui_ImageSettingTabCountryIcon;
+lv_obj_t * ui_LabelSettingTabCountryName;
+lv_obj_t * ui_ImageSettingTabCountryChange;
+lv_obj_t * ui_ContainerSettingTabBody3;
+lv_obj_t * ui_ContainerSettingTabBluetooth;
+lv_obj_t * ui_ContainerSettingTabBluetoothIcon;
+lv_obj_t * ui_ImageSettingTabBluetoothIcon;
+lv_obj_t * ui_LabelSettingTabBluetoothName;
+lv_obj_t * ui_SwitchSettingTabBluetoothEnable;
+lv_obj_t * ui_ContainerSettingTabEmailAlert;
+lv_obj_t * ui_ContainerSettingTabEmailAlertIcon;
+lv_obj_t * ui_ImageSettingTabEmailAlertIcon;
+lv_obj_t * ui_LabelSettingTabEmailAlertName;
+lv_obj_t * ui_SwitchSettingTabEmailAlertEnable;
+lv_obj_t * ui_ContainerSettingTabBody4;
+lv_obj_t * ui_ContainerSettingTabWeb;
+lv_obj_t * ui_ContainerSettingTabWebIcon;
+lv_obj_t * ui_ImageSettingTabWebIcon;
+lv_obj_t * ui_LabelSettingTabWebName;
+lv_obj_t * ui_ImageSettingTabWebEdit;
+lv_obj_t * ui_ContainerSettingTabEmail;
+lv_obj_t * ui_ContainerSettingTabEmailIcon;
+lv_obj_t * ui_ImageSettingTabEmailIcon;
+lv_obj_t * ui_LabelSettingTabEmailName;
+lv_obj_t * ui_ImageSettingTabEmailEdit;
 lv_obj_t * ui_ContainerSettingLanguage;
 lv_obj_t * ui_ContainerSettingLanguageTitle;
 lv_obj_t * ui_ImageSettingLanguageTitleIcon;
@@ -65,6 +118,8 @@ lv_obj_t * ui_ContainerSettingStage;
 lv_obj_t * ui_ImageSettingStageLanguage;
 lv_obj_t * ui_ImageSettingStageCountry;
 lv_obj_t * ui_ImageSettingStageWifi;
+lv_obj_t * ui_ButtonSettingSelect;
+lv_obj_t * ui_LabelSettingSelectButton;
 lv_obj_t * ui_ContainerWifiPassword;
 lv_obj_t * ui_ContainerWifiSelect;
 lv_obj_t * ui_ContainerWifiSelectIcon;
@@ -175,9 +230,7 @@ lv_obj_t * ui_LabelUnitTVOC;
 lv_obj_t * ui_BarValueTVOC;
 lv_obj_t * ui_LabelNameTVOC;
 lv_obj_t * ui_ContainerLineTVOC;
-void ui_event_ContainerCoverSetting(lv_event_t * e);
 lv_obj_t * ui_ContainerCoverSetting;
-void ui_event_PanelSetting(lv_event_t * e);
 lv_obj_t * ui_PanelSetting;
 lv_obj_t * ui_ContainerSettingIcon;
 lv_obj_t * ui_ImageSettingIcon;
@@ -188,6 +241,15 @@ lv_obj_t * ui____initial_actions0;
 
 // IMAGES AND IMAGE SETS
 const lv_img_dsc_t * ui_imgset_co[1] = {&ui_img_images_co2_png};
+const lv_img_dsc_t * ui_imgset_flag_be_[1] = {&ui_img_images_flag_be_44_png};
+const lv_img_dsc_t * ui_imgset_flag_de_[1] = {&ui_img_images_flag_de_44_png};
+const lv_img_dsc_t * ui_imgset_flag_en_[1] = {&ui_img_images_flag_en_44_png};
+const lv_img_dsc_t * ui_imgset_flag_es_[1] = {&ui_img_images_flag_es_44_png};
+const lv_img_dsc_t * ui_imgset_flag_pl_[1] = {&ui_img_images_flag_pl_44_png};
+const lv_img_dsc_t * ui_imgset_flag_pt_[1] = {&ui_img_images_flag_pt_44_png};
+const lv_img_dsc_t * ui_imgset_flag_ro_[1] = {&ui_img_images_flag_ro_44_png};
+const lv_img_dsc_t * ui_imgset_flag_sv_[1] = {&ui_img_images_flag_sv_44_png};
+const lv_img_dsc_t * ui_imgset_flag_tr_[1] = {&ui_img_images_flag_tr_44_png};
 const lv_img_dsc_t * ui_imgset_wifi_[1] = {&ui_img_images_wifi_44_png};
 const lv_img_dsc_t * ui_imgset_wifi_blue_[1] = {&ui_img_images_wifi_blue_24_png};
 const lv_img_dsc_t * ui_imgset_wifi_white_[1] = {&ui_img_images_wifi_white_24_png};
@@ -212,24 +274,6 @@ void ui_event_ScreenLoadAQI(lv_event_t * e)
     }
 }
 
-void ui_event_ContainerCoverSetting(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        aqi_indicator_setting_click_event(e);
-    }
-}
-
-void ui_event_PanelSetting(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        aqi_indicator_setting_click_event(e);
-    }
-}
-
 ///////////////////// SCREENS ////////////////////
 
 void ui_init(void)
@@ -244,11 +288,12 @@ void ui_init(void)
     ui_ScreenLoadAQI_screen_init();
     ui_ScreenSettingAQI_screen_init();
     ui_ScreenIndicatorAQI_screen_init();
-    ui____initial_actions0 = lv_obj_create(NULL);
-    lv_disp_load_scr(ui_ScreenLoadAQI);
 
     aqi_indicator_ui_init();
     aqi_setting_init();
     aqi_utility_init();
     aqi_sensor_init();
+
+    ui____initial_actions0 = lv_obj_create(NULL);
+    lv_disp_load_scr(ui_ScreenLoadAQI);
 }

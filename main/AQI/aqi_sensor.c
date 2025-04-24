@@ -11,9 +11,9 @@
 #include "aqi_config.h"
 #include "aqi_indicator_ui.h"
 
-#define AQI_SENSOR_TASK_NAME         "AQI Sensor Task"
-#define AQI_SENSOR_TASK_STACK_SIZE   (5 * 1024)
-#define AQI_SENSOR_TASK_PRIORITY     5
+#define AQI_SENSOR_TASK_NAME       "AQI Sensor Task"
+#define AQI_SENSOR_TASK_STACK_SIZE (5 * 1024)
+#define AQI_SENSOR_TASK_PRIORITY   (5)
 
 typedef struct {
     aqi_config_sensor_t *config;

@@ -10,8 +10,6 @@
 extern "C" {
 #endif
 
-void aqi_indicator_setting_click_event(lv_event_t * e);
-
 #ifdef __cplusplus
 } /*extern "C"*/
 #endif

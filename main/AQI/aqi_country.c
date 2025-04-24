@@ -29,6 +29,7 @@
 #define AQI_COUNTRY_ATTR_DEFAULT(XX, xx) {\
     .selector = NULL,\
     .flag = &ui_img_images_flag_##xx##_png,\
+    .flag_tab = &ui_img_images_flag_##xx##_44_png,\
     .locale = #xx,\
     .timezone = AQI_COUNTRY_##XX##_TIMEZONE\
 }
@@ -36,6 +37,7 @@
 typedef struct {
     aqi_selector_t *selector;
     const lv_img_dsc_t *flag;
+    const lv_img_dsc_t *flag_tab;
     char *locale;
     char *timezone;
 } aqi_country_attr_t;
@@ -64,13 +66,22 @@ static aqi_country_t _aqi_country = {
     }
 };
 
-static void __aqi_country_update_timezone()
+static void __aqi_country_update_timezone(aqi_country_attr_t aqi_country_attr)
 {
-    ESP_LOGI(TAG, "Setting timezone for %s: %s", _aqi_country.attr[_aqi_country.selected].locale,
-                                                 _aqi_country.attr[_aqi_country.selected].timezone);
+    ESP_LOGI(TAG, "Setting timezone for %s: %s",aqi_country_attr.locale, aqi_country_attr.timezone);
 
     setenv("TZ", _aqi_country.attr[_aqi_country.selected].timezone, 1);
     tzset();
+}
+
+static void __aqi_country_update(aqi_country_attr_t aqi_country_attr)
+{
+    lv_img_set_src(ui_ImageSettingTabCountryIcon, aqi_country_attr.flag_tab);
+
+    __aqi_country_update_timezone(aqi_country_attr);
+
+    lv_label_set_text_fmt(ui_LabelSettingTabCountryName, "%s (%s)",
+                          _(aqi_selector_label_name_locale(AQI_COUNTRY_TYPE, aqi_country_attr.locale)), _("country"));
 }
 
 static void __aqi_country_select_event_handler(lv_event_t *event)
@@ -90,14 +101,14 @@ static void __aqi_country_select_event_handler(lv_event_t *event)
         // Update the selected country
         aqi_selector_update_item(selector, 1);
         _aqi_country.selected = selector->index;
-        __aqi_country_update_timezone();
+        __aqi_country_update(_aqi_country.attr[_aqi_country.selected]);
     }
 }
 
 int aqi_country_init()
 {
-    _aqi_country.container = aqi_setting_create_container(ui_ContainerSettingCountry,
-                                                          AQI_COUNTRY_CONTAINER_SIZE, AQI_COUNTRY_CONTAINER_OFFSET);
+    _aqi_country.container = aqi_selector_create_container(ui_ContainerSettingCountry,
+                                                           AQI_COUNTRY_CONTAINER_SIZE, AQI_COUNTRY_CONTAINER_OFFSET);
 
     for (uint8_t i = 0; i < AQI_COUNTRY_NUMBER; i++)
     {
@@ -118,6 +129,9 @@ int aqi_country_init()
 
 int aqi_country_language_update()
 {
+    lv_label_set_text_fmt(ui_LabelSettingTabCountryName, "%s (%s)",
+                          _(aqi_selector_label_name_locale(AQI_COUNTRY_TYPE, _aqi_country.attr[_aqi_country.selected].locale)), _("country"));
+
     for (uint8_t i = 0; i < AQI_COUNTRY_NUMBER; i++)
     {
         aqi_selector_update_language(_aqi_country.attr[i].selector, AQI_COUNTRY_TYPE, _aqi_country.attr[i].locale);

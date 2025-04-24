@@ -51,6 +51,59 @@ void ui_ScreenSettingAQI_screen_init(void);
 extern lv_obj_t * ui_ScreenSettingAQI;
 extern lv_obj_t * ui_ContainerSetting;
 extern lv_obj_t * ui_ContainerSettingMain;
+extern lv_obj_t * ui_ContainerSettingTab;
+extern lv_obj_t * ui_ContainerSettingTabHeader;
+extern lv_obj_t * ui_ImageSettingTabSwitchBack;
+extern lv_obj_t * ui_LabelSettingTabTitleName;
+extern lv_obj_t * ui_SwitchSettingTabDarkMode;
+extern lv_obj_t * ui_ContainerSettingTabBody;
+extern lv_obj_t * ui_ContainerSettingTabBody1;
+extern lv_obj_t * ui_ContainerSettingTabSound;
+extern lv_obj_t * ui_ContainerSettingTabSoundIcon;
+extern lv_obj_t * ui_ImageSettingTabSoundIcon;
+extern lv_obj_t * ui_LabelSettingTabSoundName;
+extern lv_obj_t * ui_SwitchSettingTabSoundEnable;
+extern lv_obj_t * ui_ContainerSettingTabWifi;
+extern lv_obj_t * ui_ContainerSettingTabWifiIcon;
+extern lv_obj_t * ui_ImageSettingTabWifiIcon;
+extern lv_obj_t * ui_LabelSettingTabWifiName;
+extern lv_obj_t * ui_SwitchSettingTabWifiEnable;
+extern lv_obj_t * ui_ContainerSettingTabHistory;
+extern lv_obj_t * ui_ContainerSettingTabHistoryIcon;
+extern lv_obj_t * ui_ImageSettingTabHistoryIcon;
+extern lv_obj_t * ui_LabelSettingTabHistoryName;
+extern lv_obj_t * ui_SwitchSettingTabHistoryEnable;
+extern lv_obj_t * ui_ContainerSettingTabBody2;
+extern lv_obj_t * ui_ContainerSettingTabLanguage;
+extern lv_obj_t * ui_ImageSettingTabLanguageIcon;
+extern lv_obj_t * ui_LabelSettingTabLanguageName;
+extern lv_obj_t * ui_ImageSettingTabLanguageChange;
+extern lv_obj_t * ui_ContainerSettingTabCountry;
+extern lv_obj_t * ui_ImageSettingTabCountryIcon;
+extern lv_obj_t * ui_LabelSettingTabCountryName;
+extern lv_obj_t * ui_ImageSettingTabCountryChange;
+extern lv_obj_t * ui_ContainerSettingTabBody3;
+extern lv_obj_t * ui_ContainerSettingTabBluetooth;
+extern lv_obj_t * ui_ContainerSettingTabBluetoothIcon;
+extern lv_obj_t * ui_ImageSettingTabBluetoothIcon;
+extern lv_obj_t * ui_LabelSettingTabBluetoothName;
+extern lv_obj_t * ui_SwitchSettingTabBluetoothEnable;
+extern lv_obj_t * ui_ContainerSettingTabEmailAlert;
+extern lv_obj_t * ui_ContainerSettingTabEmailAlertIcon;
+extern lv_obj_t * ui_ImageSettingTabEmailAlertIcon;
+extern lv_obj_t * ui_LabelSettingTabEmailAlertName;
+extern lv_obj_t * ui_SwitchSettingTabEmailAlertEnable;
+extern lv_obj_t * ui_ContainerSettingTabBody4;
+extern lv_obj_t * ui_ContainerSettingTabWeb;
+extern lv_obj_t * ui_ContainerSettingTabWebIcon;
+extern lv_obj_t * ui_ImageSettingTabWebIcon;
+extern lv_obj_t * ui_LabelSettingTabWebName;
+extern lv_obj_t * ui_ImageSettingTabWebEdit;
+extern lv_obj_t * ui_ContainerSettingTabEmail;
+extern lv_obj_t * ui_ContainerSettingTabEmailIcon;
+extern lv_obj_t * ui_ImageSettingTabEmailIcon;
+extern lv_obj_t * ui_LabelSettingTabEmailName;
+extern lv_obj_t * ui_ImageSettingTabEmailEdit;
 extern lv_obj_t * ui_ContainerSettingLanguage;
 extern lv_obj_t * ui_ContainerSettingLanguageTitle;
 extern lv_obj_t * ui_ImageSettingLanguageTitleIcon;
@@ -77,6 +130,8 @@ extern lv_obj_t * ui_ContainerSettingStage;
 extern lv_obj_t * ui_ImageSettingStageLanguage;
 extern lv_obj_t * ui_ImageSettingStageCountry;
 extern lv_obj_t * ui_ImageSettingStageWifi;
+extern lv_obj_t * ui_ButtonSettingSelect;
+extern lv_obj_t * ui_LabelSettingSelectButton;
 extern lv_obj_t * ui_ContainerWifiPassword;
 extern lv_obj_t * ui_ContainerWifiSelect;
 extern lv_obj_t * ui_ContainerWifiSelectIcon;
@@ -186,9 +241,7 @@ extern lv_obj_t * ui_LabelUnitTVOC;
 extern lv_obj_t * ui_BarValueTVOC;
 extern lv_obj_t * ui_LabelNameTVOC;
 extern lv_obj_t * ui_ContainerLineTVOC;
-void ui_event_ContainerCoverSetting(lv_event_t * e);
 extern lv_obj_t * ui_ContainerCoverSetting;
-void ui_event_PanelSetting(lv_event_t * e);
 extern lv_obj_t * ui_PanelSetting;
 extern lv_obj_t * ui_ContainerSettingIcon;
 extern lv_obj_t * ui_ImageSettingIcon;
@@ -203,6 +256,20 @@ LV_IMG_DECLARE(ui_img_images_mobilesignal_png);    // assets/Images/MobileSignal
 LV_IMG_DECLARE(ui_img_images_batteryoutline_png);    // assets/Images/BatteryOutline.png
 LV_IMG_DECLARE(ui_img_images_load_spinner_png);    // assets/Images/Load_Spinner.png
 LV_IMG_DECLARE(ui_img_images_load_en_us_png);    // assets/Images/Load_en_US.png
+LV_IMG_DECLARE(ui_img_images_switch_back_png);    // assets/Images/Switch_Back.png
+LV_IMG_DECLARE(ui_img_images_light_mode_select_png);    // assets/Images/Light_Mode_Select.png
+LV_IMG_DECLARE(ui_img_images_light_mode_deselect_png);    // assets/Images/Light_Mode_Deselect.png
+LV_IMG_DECLARE(ui_img_images_dark_mode_deselect_png);    // assets/Images/Dark_Mode_Deselect.png
+LV_IMG_DECLARE(ui_img_images_dark_mode_select_png);    // assets/Images/Dark_Mode_Select.png
+LV_IMG_DECLARE(ui_img_images_sound_png);    // assets/Images/Sound.png
+LV_IMG_DECLARE(ui_img_images_wifi_white_24_png);    // assets/Images/Wifi_White_24.png
+LV_IMG_DECLARE(ui_img_images_history_png);    // assets/Images/History.png
+LV_IMG_DECLARE(ui_img_images_flag_en_44_png);    // assets/Images/Flag_EN_44.png
+LV_IMG_DECLARE(ui_img_images_change_png);    // assets/Images/Change.png
+LV_IMG_DECLARE(ui_img_images_bluetooth_png);    // assets/Images/Bluetooth.png
+LV_IMG_DECLARE(ui_img_images_email_png);    // assets/Images/Email.png
+LV_IMG_DECLARE(ui_img_images_web_png);    // assets/Images/Web.png
+LV_IMG_DECLARE(ui_img_images_edit_png);    // assets/Images/Edit.png
 LV_IMG_DECLARE(ui_img_images_language_png);    // assets/Images/Language.png
 LV_IMG_DECLARE(ui_img_images_country_png);    // assets/Images/Country.png
 LV_IMG_DECLARE(ui_img_images_wifi_44_png);    // assets/Images/Wifi_44.png
@@ -210,35 +277,48 @@ LV_IMG_DECLARE(ui_img_images_wifi_blue_24_png);    // assets/Images/Wifi_Blue_24
 LV_IMG_DECLARE(ui_img_images_stage_grey_png);    // assets/Images/Stage_Grey.png
 LV_IMG_DECLARE(ui_img_images_exit_png);    // assets/Images/Exit.png
 LV_IMG_DECLARE(ui_img_images_wifi_lock_select_png);    // assets/Images/Wifi_Lock_Select.png
-LV_IMG_DECLARE(ui_img_images_pm_png);    // assets/Images/PM.png
+LV_IMG_DECLARE(ui_img_images_aqi_png);    // assets/Images/AQI.png
+LV_IMG_DECLARE(ui_img_images_aqi_bad_png);    // assets/Images/AQI_Bad.png
+LV_IMG_DECLARE(ui_img_images_aqi_good_png);    // assets/Images/AQI_Good.png
+LV_IMG_DECLARE(ui_img_images_aqi_warning_png);    // assets/Images/AQI_Warning.png
+LV_IMG_DECLARE(ui_img_images_batteryoutline_png);    // assets/Images/BatteryOutline.png
 LV_IMG_DECLARE(ui_img_images_co2_png);    // assets/Images/CO2.png
-LV_IMG_DECLARE(ui_img_images_pm_good_png);    // assets/Images/PM_Good.png
-LV_IMG_DECLARE(ui_img_images_temp_png);    // assets/Images/TEMP.png
-LV_IMG_DECLARE(ui_img_images_rh_png);    // assets/Images/RH.png
-LV_IMG_DECLARE(ui_img_images_tvoc_png);    // assets/Images/TVOC.png
-LV_IMG_DECLARE(ui_img_images_setting_png);    // assets/Images/Setting.png
 LV_IMG_DECLARE(ui_img_images_co2_bad_png);    // assets/Images/CO2_Bad.png
 LV_IMG_DECLARE(ui_img_images_co2_good_png);    // assets/Images/CO2_Good.png
 LV_IMG_DECLARE(ui_img_images_co2_warning_png);    // assets/Images/CO2_Warning.png
 LV_IMG_DECLARE(ui_img_images_flag_be_png);    // assets/Images/Flag_BE.png
+LV_IMG_DECLARE(ui_img_images_flag_be_44_png);    // assets/Images/Flag_BE_44.png
 LV_IMG_DECLARE(ui_img_images_flag_de_png);    // assets/Images/Flag_DE.png
+LV_IMG_DECLARE(ui_img_images_flag_de_44_png);    // assets/Images/Flag_DE_44.png
 LV_IMG_DECLARE(ui_img_images_flag_en_png);    // assets/Images/Flag_EN.png
 LV_IMG_DECLARE(ui_img_images_flag_es_png);    // assets/Images/Flag_ES.png
+LV_IMG_DECLARE(ui_img_images_flag_es_44_png);    // assets/Images/Flag_ES_44.png
 LV_IMG_DECLARE(ui_img_images_flag_pl_png);    // assets/Images/Flag_PL.png
+LV_IMG_DECLARE(ui_img_images_flag_pl_44_png);    // assets/Images/Flag_PL_44.png
 LV_IMG_DECLARE(ui_img_images_flag_pt_png);    // assets/Images/Flag_PT.png
+LV_IMG_DECLARE(ui_img_images_flag_pt_44_png);    // assets/Images/Flag_PT_44.png
 LV_IMG_DECLARE(ui_img_images_flag_ro_png);    // assets/Images/Flag_RO.png
+LV_IMG_DECLARE(ui_img_images_flag_ro_44_png);    // assets/Images/Flag_RO_44.png
 LV_IMG_DECLARE(ui_img_images_flag_sv_png);    // assets/Images/Flag_SV.png
+LV_IMG_DECLARE(ui_img_images_flag_sv_44_png);    // assets/Images/Flag_SV_44.png
 LV_IMG_DECLARE(ui_img_images_flag_tr_png);    // assets/Images/Flag_TR.png
+LV_IMG_DECLARE(ui_img_images_flag_tr_44_png);    // assets/Images/Flag_TR_44.png
+LV_IMG_DECLARE(ui_img_images_pm_png);    // assets/Images/PM.png
 LV_IMG_DECLARE(ui_img_images_pm_bad_png);    // assets/Images/PM_Bad.png
+LV_IMG_DECLARE(ui_img_images_pm_good_png);    // assets/Images/PM_Good.png
 LV_IMG_DECLARE(ui_img_images_pm_warning_png);    // assets/Images/PM_Warning.png
+LV_IMG_DECLARE(ui_img_images_rh_png);    // assets/Images/RH.png
 LV_IMG_DECLARE(ui_img_images_rh_bad_png);    // assets/Images/RH_Bad.png
 LV_IMG_DECLARE(ui_img_images_rh_good_png);    // assets/Images/RH_Good.png
 LV_IMG_DECLARE(ui_img_images_rh_warning_png);    // assets/Images/RH_Warning.png
+LV_IMG_DECLARE(ui_img_images_setting_png);    // assets/Images/Setting.png
 LV_IMG_DECLARE(ui_img_images_stage_green_png);    // assets/Images/Stage_Green.png
+LV_IMG_DECLARE(ui_img_images_temp_png);    // assets/Images/TEMP.png
 LV_IMG_DECLARE(ui_img_images_temp_bad_png);    // assets/Images/TEMP_Bad.png
 LV_IMG_DECLARE(ui_img_images_temp_good_png);    // assets/Images/TEMP_Good.png
 LV_IMG_DECLARE(ui_img_images_temp_warning_png);    // assets/Images/TEMP_Warning.png
 LV_IMG_DECLARE(ui_img_images_tick_png);    // assets/Images/Tick.png
+LV_IMG_DECLARE(ui_img_images_tvoc_png);    // assets/Images/TVOC.png
 LV_IMG_DECLARE(ui_img_images_tvoc_bad_png);    // assets/Images/TVOC_Bad.png
 LV_IMG_DECLARE(ui_img_images_tvoc_good_png);    // assets/Images/TVOC_Good.png
 LV_IMG_DECLARE(ui_img_images_tvoc_warning_png);    // assets/Images/TVOC_Warning.png
@@ -246,7 +326,6 @@ LV_IMG_DECLARE(ui_img_images_wifi_lock_unselect_png);    // assets/Images/Wifi_L
 LV_IMG_DECLARE(ui_img_images_wifi_signal_excellent_png);    // assets/Images/Wifi_Signal_Excellent.png
 LV_IMG_DECLARE(ui_img_images_wifi_signal_good_png);    // assets/Images/Wifi_Signal_Good.png
 LV_IMG_DECLARE(ui_img_images_wifi_signal_poor_png);    // assets/Images/Wifi_Signal_Poor.png
-LV_IMG_DECLARE(ui_img_images_wifi_white_24_png);    // assets/Images/Wifi_White_24.png
 
 // FONTS
 LV_FONT_DECLARE(ui_font_OpenSans_Regular_14);

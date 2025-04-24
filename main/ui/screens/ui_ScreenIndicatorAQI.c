@@ -941,7 +941,5 @@ void ui_ScreenIndicatorAQI_screen_init(void)
     lv_obj_add_flag(ui_ImageSettingIcon, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
     lv_obj_clear_flag(ui_ImageSettingIcon, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
-    lv_obj_add_event_cb(ui_ContainerCoverSetting, ui_event_ContainerCoverSetting, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_PanelSetting, ui_event_PanelSetting, LV_EVENT_ALL, NULL);
 
 }
