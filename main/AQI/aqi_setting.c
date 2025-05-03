@@ -21,6 +21,9 @@
 
 #define AQI_SETTING_CONTAINER_STATUS_SIZE 800, 47
 
+#define AQI_SETTING_BUTTON_SELECT_LABEL_SELECT _("button_select")
+#define AQI_SETTING_BUTTON_SELECT_LABEL_BACK   _("button_back")
+
 typedef enum {
     AQI_SETTING_EVENT_SCREEN_LOADED = 1,
     AQI_SETTING_EVENT_SETTING,
@@ -351,6 +354,7 @@ static state_machine_result_t __aqi_setting_state_wifi_entry_handler(state_machi
 {
     ESP_LOGI(TAG, "Entering to wifi state");
 
+    lv_label_set_text(ui_LabelSettingSelectButton, AQI_SETTING_BUTTON_SELECT_LABEL_BACK);
     lv_obj_clear_flag(ui_ContainerSettingWifi, LV_OBJ_FLAG_HIDDEN);
     aqi_wifi_event(aqi_wifi_event_config);
 
@@ -364,7 +368,12 @@ static state_machine_result_t __aqi_setting_state_wifi_handler(state_machine_t* 
         case AQI_SETTING_EVENT_SELECT_BUTTON_CLICKED:
         {
             ESP_LOGI(TAG, "Select button clicked event triggered");
-            return switch_state(pState, &_aqi_setting_states[aqi_setting_state_tab]);
+
+            if (aqi_wifi_exit_condition())
+            {
+                return switch_state(pState, &_aqi_setting_states[aqi_setting_state_tab]);
+            }
+            break;
         }
 
         default:
@@ -377,6 +386,7 @@ static state_machine_result_t __aqi_setting_state_wifi_exit_handler(state_machin
 {
     ESP_LOGI(TAG, "Exiting from wifi state");
 
+    lv_label_set_text(ui_LabelSettingSelectButton, AQI_SETTING_BUTTON_SELECT_LABEL_SELECT);
     lv_obj_add_flag(ui_ContainerSettingWifi, LV_OBJ_FLAG_HIDDEN);
     aqi_wifi_event(aqi_wifi_event_setting_done);
 

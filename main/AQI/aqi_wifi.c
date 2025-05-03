@@ -368,6 +368,24 @@ void __aqi_wifi_time_sync_callback(struct timeval *tv)
 }
 
 /********************************** Public Function **********************************/
+int aqi_wifi_stack_init()
+{
+    // Initialize Wi-Fi
+    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
+    ESP_ERROR_CHECK(esp_netif_init());
+    ESP_ERROR_CHECK(esp_event_loop_create_default());
+    ESP_ERROR_CHECK(esp_event_handler_register(WIFI_EVENT, ESP_EVENT_ANY_ID, &__wifi_event_handler, NULL));
+    ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT, ESP_EVENT_ANY_ID, &__wifi_event_handler, NULL));
+    ESP_ERROR_CHECK(esp_netif_create_default_wifi_mesh_netifs(&_aqi_wifi.sta_netif, NULL));
+    ESP_ERROR_CHECK(esp_wifi_init(&cfg));
+    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
+    ESP_ERROR_CHECK(esp_wifi_start());
+
+    vTaskDelay(pdMS_TO_TICKS(1000));
+
+    return ESP_OK;
+}
+
 int aqi_wifi_init()
 {
     _aqi_wifi.machine.State = &_aqi_wifi_states[aqi_wifi_state_idle];
@@ -380,17 +398,6 @@ int aqi_wifi_init()
     // Initialize Timer
     _aqi_wifi.timer_handle = lv_timer_create(__aqi_wifi_timer_handler, AQI_WIFI_TIMER_INTERVAL_MS, &_aqi_wifi);
     lv_timer_pause(_aqi_wifi.timer_handle);
-
-    // Initialize Wi-Fi
-    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
-    ESP_ERROR_CHECK(esp_netif_init());
-    ESP_ERROR_CHECK(esp_event_loop_create_default());
-    ESP_ERROR_CHECK(esp_event_handler_register(WIFI_EVENT, ESP_EVENT_ANY_ID, &__wifi_event_handler, NULL));
-    ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT, ESP_EVENT_ANY_ID, &__wifi_event_handler, NULL));
-    ESP_ERROR_CHECK(esp_netif_create_default_wifi_mesh_netifs(&_aqi_wifi.sta_netif, NULL));
-    ESP_ERROR_CHECK(esp_wifi_init(&cfg));
-    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
-    ESP_ERROR_CHECK(esp_wifi_start());
 
     // Initialize SNTP
     esp_sntp_setoperatingmode(SNTP_OPMODE_POLL);
@@ -413,6 +420,11 @@ int aqi_wifi_event(aqi_wifi_event_t event)
 {
     xEventGroupSetBits(_aqi_wifi.event_handle, event);
     return ESP_OK;
+}
+
+uint8_t aqi_wifi_exit_condition()
+{
+    return _aqi_wifi.connected || (!lv_obj_has_state(ui_SwitchSettingTabWifiEnable, LV_STATE_CHECKED));
 }
 
 /********************************** Idle State **********************************/

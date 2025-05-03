@@ -1043,6 +1043,7 @@ void ui_ScreenSettingAQI_screen_init(void)
     lv_obj_set_align(ui_LabelWifiPasswordShow, LV_ALIGN_RIGHT_MID);
     lv_label_set_text(ui_LabelWifiPasswordShow, "");
     lv_obj_add_flag(ui_LabelWifiPasswordShow, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_CHECKABLE);     /// Flags
+    lv_obj_set_style_text_font(ui_LabelWifiPasswordShow, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_ButtonWifiConnect = lv_btn_create(ui_ContainerWifiPassword);
     lv_obj_set_width(ui_ButtonWifiConnect, 768);

@@ -193,8 +193,12 @@ static state_machine_result_t __aqi_factory_state_wifi_handler(state_machine_t* 
 
         case AQI_FACTORY_EVENT_NEXT:
         {
-            switch_state(pState, &_aqi_factory_states[aqi_factory_state_done]);
-            return TRIGGERED_TO_SELF;
+            if (aqi_wifi_exit_condition())
+            {
+                switch_state(pState, &_aqi_factory_states[aqi_factory_state_done]);
+                return TRIGGERED_TO_SELF;
+            }
+            break;
         }
 
         default:

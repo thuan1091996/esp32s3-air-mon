@@ -27,6 +27,8 @@ int aqi_wifi_init();
 
 int aqi_wifi_event(aqi_wifi_event_t event);
 
+uint8_t aqi_wifi_exit_condition();
+
 #ifdef __cplusplus
 } /*extern "C"*/
 #endif
