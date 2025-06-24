@@ -145,8 +145,6 @@ void __aqi_wifi_connected(aqi_wifi_t *aqi_wifi)
     ESP_LOGD(TAG, "Connected to Wi-Fi network: %s", aqi_wifi->ssid.info.name);
 
     aqi_wifi->connected = 1;
-    ESP_ERROR_CHECK(esp_netif_dhcpc_start(aqi_wifi->sta_netif));
-    sntp_restart();
 
     aqi_wifi->last_rssi = 0; // Reset RSSI toz force update
     lv_obj_clear_flag(ui_ImageWifiSignal, LV_OBJ_FLAG_HIDDEN);
@@ -161,7 +159,6 @@ void __aqi_wifi_disconnected(aqi_wifi_t *aqi_wifi)
     ESP_LOGW(TAG, "Disconnected from Wi-Fi network: %s", aqi_wifi->ssid.info.name);
 
     aqi_wifi->connected = 0;
-    ESP_ERROR_CHECK(esp_netif_dhcpc_stop(aqi_wifi->sta_netif));
 
     lv_obj_add_flag(ui_ImageWifiSignal, LV_OBJ_FLAG_HIDDEN);
     lv_timer_pause(aqi_wifi->timer_handle);
@@ -345,8 +342,9 @@ static void __wifi_event_handler(void *arg, esp_event_base_t event_base, int32_t
         switch (event_id)
         {
             case IP_EVENT_STA_GOT_IP:
-                esp_netif_ip_info_t *ip_info = (esp_netif_ip_info_t *)event_data;
-                ESP_LOGD(TAG, "IP acquired: " IPSTR, IP2STR(&ip_info->ip));
+                ip_event_got_ip_t *event = (ip_event_got_ip_t *)event_data;
+                ESP_LOGI(TAG, "IP acquired: " IPSTR, IP2STR(&event->ip_info.ip));
+                sntp_restart();
                 break;
             default:
                 ESP_LOGD(TAG, "Unhandled IP event: %d", event_id);
@@ -376,7 +374,7 @@ int aqi_wifi_stack_init()
     ESP_ERROR_CHECK(esp_event_loop_create_default());
     ESP_ERROR_CHECK(esp_event_handler_register(WIFI_EVENT, ESP_EVENT_ANY_ID, &__wifi_event_handler, NULL));
     ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT, ESP_EVENT_ANY_ID, &__wifi_event_handler, NULL));
-    ESP_ERROR_CHECK(esp_netif_create_default_wifi_mesh_netifs(&_aqi_wifi.sta_netif, NULL));
+    _aqi_wifi.sta_netif = esp_netif_create_default_wifi_sta();
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
     ESP_ERROR_CHECK(esp_wifi_start());
