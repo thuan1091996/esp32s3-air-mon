@@ -621,6 +621,7 @@ static state_machine_result_t __aqi_wifi_state_scan_handler(state_machine_t* con
             ESP_ERROR_CHECK(esp_wifi_scan_get_ap_records(&ap_number, ap_info));
 
             __aqi_wifi_create_ssid(aqi_wifi, ap_number, ap_info);
+            __aqi_wifi_connect(aqi_wifi);
             return switch_state(pState, &_aqi_wifi_states[aqi_wifi_state_config]);
         }
 
