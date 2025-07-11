@@ -72,6 +72,15 @@ static void __aqi_country_update_timezone(aqi_country_attr_t aqi_country_attr)
 
     setenv("TZ", _aqi_country.attr[_aqi_country.selected].timezone, 1);
     tzset();
+
+    // Update the time utility with the current local time
+    struct tm timeinfo = { 0 };
+    time_t now;
+
+    time(&now);                    // Get the current time
+    localtime_r(&now, &timeinfo);  // Convert to local time
+
+    aqi_utility_update_time(timeinfo);
 }
 
 static void __aqi_country_update(aqi_country_attr_t aqi_country_attr)
