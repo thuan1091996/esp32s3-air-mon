@@ -66,7 +66,7 @@ void ui_ScreenSettingAQI_screen_init(void)
 
     ui_SwitchSettingTabDarkMode = lv_switch_create(ui_ContainerSettingTabHeader);
     lv_obj_set_width(ui_SwitchSettingTabDarkMode, 92);
-    lv_obj_set_height(ui_SwitchSettingTabDarkMode, 52);
+    lv_obj_set_height(ui_SwitchSettingTabDarkMode, 56);
     lv_obj_set_align(ui_SwitchSettingTabDarkMode, LV_ALIGN_RIGHT_MID);
     lv_obj_add_state(ui_SwitchSettingTabDarkMode, LV_STATE_CHECKED);       /// States
     lv_obj_set_style_radius(ui_SwitchSettingTabDarkMode, 16, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -531,7 +531,7 @@ void ui_ScreenSettingAQI_screen_init(void)
 
     ui_ContainerSettingTabWebIcon = lv_obj_create(ui_ContainerSettingTabWeb);
     lv_obj_remove_style_all(ui_ContainerSettingTabWebIcon);
-    lv_obj_set_width(ui_ContainerSettingTabWebIcon, 286);
+    lv_obj_set_width(ui_ContainerSettingTabWebIcon, 293);
     lv_obj_set_height(ui_ContainerSettingTabWebIcon, 48);
     lv_obj_set_align(ui_ContainerSettingTabWebIcon, LV_ALIGN_LEFT_MID);
     lv_obj_add_flag(ui_ContainerSettingTabWebIcon, LV_OBJ_FLAG_EVENT_BUBBLE);     /// Flags
@@ -588,7 +588,7 @@ void ui_ScreenSettingAQI_screen_init(void)
 
     ui_ContainerSettingTabEmailIcon = lv_obj_create(ui_ContainerSettingTabEmail);
     lv_obj_remove_style_all(ui_ContainerSettingTabEmailIcon);
-    lv_obj_set_width(ui_ContainerSettingTabEmailIcon, 286);
+    lv_obj_set_width(ui_ContainerSettingTabEmailIcon, 293);
     lv_obj_set_height(ui_ContainerSettingTabEmailIcon, 48);
     lv_obj_set_align(ui_ContainerSettingTabEmailIcon, LV_ALIGN_LEFT_MID);
     lv_obj_add_flag(ui_ContainerSettingTabEmailIcon, LV_OBJ_FLAG_EVENT_BUBBLE);     /// Flags
