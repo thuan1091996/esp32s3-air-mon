@@ -9,7 +9,7 @@ extern "C" {
 #include <stdint.h>
 #include <stdbool.h>
 
-#define AQI_CONFIG_INDICATOR_NUM 7
+#define AQI_CONFIG_INDICATOR_NUM 8
 
 #define AQI_CONFIG_SENSOR_ERROR_MESSAGE_SIZE 50
 

@@ -14,13 +14,14 @@ typedef struct {
 } aqi_controller_t;
 
 static aqi_indicator_attribute_t _attribute_list[] = {
-    ATTRIBUTE_DEFAULT(PM1, pm),
-    ATTRIBUTE_DEFAULT(PM25, pm),
-    ATTRIBUTE_DEFAULT(PM10, pm),
+    ATTRIBUTE_DEFAULT(PM1, pm1),
+    ATTRIBUTE_DEFAULT(PM25, pm25),
+    ATTRIBUTE_DEFAULT(PM10, pm10),
     ATTRIBUTE_DEFAULT(CO2, co2),
     ATTRIBUTE_DEFAULT(TEMP, temp),
     ATTRIBUTE_DEFAULT(RH, rh),
     ATTRIBUTE_DEFAULT(TVOC, tvoc),
+    ATTRIBUTE_DEFAULT(AQI, aqi)
 };
 
 static const char *TAG = "AQI INDICATOR";
@@ -125,6 +126,7 @@ static void __aqi_indicator_ui_event_handler(lv_event_t *event)
             ESP_LOGI(TAG, "Indicator screen loaded event triggered");
             lv_obj_set_parent(ui_ContainerStatus, ui_ContainerIndicator);
             lv_obj_set_size(ui_ContainerStatus, AQI_INDICATOR_CONTAINER_STATUS_SIZE);
+            lv_obj_clear_flag(ui_ContainerStatusCenter, LV_OBJ_FLAG_HIDDEN);
         }
     }
 }
@@ -175,8 +177,8 @@ void aqi_indicator_ui_init()
     lv_obj_add_event_cb(ui_ScreenIndicatorAQI, &__aqi_indicator_ui_event_handler, LV_EVENT_SCREEN_LOADED, NULL);
 }
 
-void aqi_indicator_ui_data_show(uint16_t pm1, uint16_t pm25, uint16_t pm10, uint16_t
-                                co2, uint16_t temp, uint16_t humi, uint16_t tvoc)
+void aqi_indicator_ui_data_show(uint16_t pm1, uint16_t pm25, uint16_t pm10, uint16_t co2,
+                                uint16_t temp, uint16_t humi, uint16_t tvoc, uint16_t aqi)
 {
     uint16_t values[_aqi_controller.indicator_num];
 
@@ -187,6 +189,7 @@ void aqi_indicator_ui_data_show(uint16_t pm1, uint16_t pm25, uint16_t pm10, uint
     values[4] = temp;
     values[5] = humi;
     values[6] = tvoc;
+    values[7] = aqi;
 
     for (int i = 0; i < _aqi_controller.indicator_num; i++)
     {

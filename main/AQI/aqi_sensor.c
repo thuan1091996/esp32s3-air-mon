@@ -39,7 +39,8 @@ static void __aqi_sensor_measurement_task(void *pvParameters)
                                         apc1_get_ECO2(),
                                         apc1_get_T_comp(),
                                         apc1_get_RH_comp(),
-                                        apc1_get_TVOC());
+                                        apc1_get_TVOC(),
+                                        apc1_get_AQI());
             example_lvgl_unlock();
         }
         else

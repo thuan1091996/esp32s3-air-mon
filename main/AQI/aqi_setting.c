@@ -118,8 +118,13 @@ int aqi_setting_init()
 
     aqi_selector_init();
 
-    lv_obj_add_event_cb(ui_PanelSetting, &__aqi_setting_event_handler,
+    lv_obj_add_event_cb(ui_ContainerStatusCenter, &__aqi_setting_event_handler,
                         LV_EVENT_CLICKED, (void*)AQI_SETTING_EVENT_SETTING);
+    lv_obj_add_event_cb(ui_ImageSetting, &__aqi_setting_event_handler,
+                        LV_EVENT_CLICKED, (void*)AQI_SETTING_EVENT_SETTING);
+    lv_obj_add_event_cb(ui_LabelSetting, &__aqi_setting_event_handler,
+                        LV_EVENT_CLICKED, (void*)AQI_SETTING_EVENT_SETTING);
+
     lv_obj_add_event_cb(ui_ScreenSettingAQI, &__aqi_setting_event_handler,
                         LV_EVENT_SCREEN_LOADED, (void*)AQI_SETTING_EVENT_SCREEN_LOADED);
 
@@ -188,13 +193,14 @@ static state_machine_result_t __aqi_setting_state_idle_handler(state_machine_t* 
 {
     switch (pState->Event)
     {
-        case AQI_SETTING_EVENT_SCREEN_LOADED: // Just call at start-up
+        case AQI_SETTING_EVENT_SCREEN_LOADED:
         {
             ESP_LOGI(TAG, "Setting screen loaded event triggered");
 
             // Update the status container
             lv_obj_set_parent(ui_ContainerStatus, ui_ContainerSettingMain);
             lv_obj_set_size(ui_ContainerStatus, AQI_SETTING_CONTAINER_STATUS_SIZE);
+            lv_obj_add_flag(ui_ContainerStatusCenter, LV_OBJ_FLAG_HIDDEN);
 
             __aqi_setting_init();
             break;

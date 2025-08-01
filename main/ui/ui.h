@@ -30,6 +30,9 @@ extern lv_obj_t * ui_ContainerLoad;
 extern lv_obj_t * ui_ContainerStatus;
 extern lv_obj_t * ui_ContaierStatusLeft;
 extern lv_obj_t * ui_LabelTime;
+extern lv_obj_t * ui_ContainerStatusCenter;
+extern lv_obj_t * ui_ImageSetting;
+extern lv_obj_t * ui_LabelSetting;
 extern lv_obj_t * ui_ContainerStatusRight;
 extern lv_obj_t * ui_ContainerMobileSignal;
 extern lv_obj_t * ui_ImageMobileSignal;
@@ -241,10 +244,16 @@ extern lv_obj_t * ui_LabelUnitTVOC;
 extern lv_obj_t * ui_BarValueTVOC;
 extern lv_obj_t * ui_LabelNameTVOC;
 extern lv_obj_t * ui_ContainerLineTVOC;
-extern lv_obj_t * ui_ContainerCoverSetting;
-extern lv_obj_t * ui_PanelSetting;
-extern lv_obj_t * ui_ContainerSettingIcon;
-extern lv_obj_t * ui_ImageSettingIcon;
+extern lv_obj_t * ui_ContainerCoverAQI;
+extern lv_obj_t * ui_PanelAQI;
+extern lv_obj_t * ui_ContainerAQI;
+extern lv_obj_t * ui_ImageIconAQI;
+extern lv_obj_t * ui_ContainerDataAQI;
+extern lv_obj_t * ui_ContainerLabelDataAQI;
+extern lv_obj_t * ui_LabelValueAQI;
+extern lv_obj_t * ui_LabelUnitAQI;
+extern lv_obj_t * ui_BarValueAQI;
+extern lv_obj_t * ui_LabelNameAQI;
 // CUSTOM VARIABLES
 
 // EVENTS
@@ -303,10 +312,18 @@ LV_IMG_DECLARE(ui_img_images_flag_sv_png);    // assets/Images/Flag_SV.png
 LV_IMG_DECLARE(ui_img_images_flag_sv_44_png);    // assets/Images/Flag_SV_44.png
 LV_IMG_DECLARE(ui_img_images_flag_tr_png);    // assets/Images/Flag_TR.png
 LV_IMG_DECLARE(ui_img_images_flag_tr_44_png);    // assets/Images/Flag_TR_44.png
-LV_IMG_DECLARE(ui_img_images_pm_png);    // assets/Images/PM.png
-LV_IMG_DECLARE(ui_img_images_pm_bad_png);    // assets/Images/PM_Bad.png
-LV_IMG_DECLARE(ui_img_images_pm_good_png);    // assets/Images/PM_Good.png
-LV_IMG_DECLARE(ui_img_images_pm_warning_png);    // assets/Images/PM_Warning.png
+LV_IMG_DECLARE(ui_img_images_pm1_png);    // assets/Images/PM1.png
+LV_IMG_DECLARE(ui_img_images_pm1_bad_png);    // assets/Images/PM1_Bad.png
+LV_IMG_DECLARE(ui_img_images_pm1_good_png);    // assets/Images/PM1_Good.png
+LV_IMG_DECLARE(ui_img_images_pm1_warning_png);    // assets/Images/PM1_Warning.png
+LV_IMG_DECLARE(ui_img_images_pm25_png);    // assets/Images/PM25.png
+LV_IMG_DECLARE(ui_img_images_pm25_bad_png);    // assets/Images/PM25_Bad.png
+LV_IMG_DECLARE(ui_img_images_pm25_good_png);    // assets/Images/PM25_Good.png
+LV_IMG_DECLARE(ui_img_images_pm25_warning_png);    // assets/Images/PM25_Warning.png
+LV_IMG_DECLARE(ui_img_images_pm10_png);    // assets/Images/PM10.png
+LV_IMG_DECLARE(ui_img_images_pm10_bad_png);    // assets/Images/PM10_Bad.png
+LV_IMG_DECLARE(ui_img_images_pm10_good_png);    // assets/Images/PM10_Good.png
+LV_IMG_DECLARE(ui_img_images_pm10_warning_png);    // assets/Images/PM10_Warning.png
 LV_IMG_DECLARE(ui_img_images_rh_png);    // assets/Images/RH.png
 LV_IMG_DECLARE(ui_img_images_rh_bad_png);    // assets/Images/RH_Bad.png
 LV_IMG_DECLARE(ui_img_images_rh_good_png);    // assets/Images/RH_Good.png

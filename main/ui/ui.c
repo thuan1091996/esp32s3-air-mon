@@ -17,6 +17,9 @@ lv_obj_t * ui_ContainerLoad;
 lv_obj_t * ui_ContainerStatus;
 lv_obj_t * ui_ContaierStatusLeft;
 lv_obj_t * ui_LabelTime;
+lv_obj_t * ui_ContainerStatusCenter;
+lv_obj_t * ui_ImageSetting;
+lv_obj_t * ui_LabelSetting;
 lv_obj_t * ui_ContainerStatusRight;
 lv_obj_t * ui_ContainerMobileSignal;
 lv_obj_t * ui_ImageMobileSignal;
@@ -230,10 +233,16 @@ lv_obj_t * ui_LabelUnitTVOC;
 lv_obj_t * ui_BarValueTVOC;
 lv_obj_t * ui_LabelNameTVOC;
 lv_obj_t * ui_ContainerLineTVOC;
-lv_obj_t * ui_ContainerCoverSetting;
-lv_obj_t * ui_PanelSetting;
-lv_obj_t * ui_ContainerSettingIcon;
-lv_obj_t * ui_ImageSettingIcon;
+lv_obj_t * ui_ContainerCoverAQI;
+lv_obj_t * ui_PanelAQI;
+lv_obj_t * ui_ContainerAQI;
+lv_obj_t * ui_ImageIconAQI;
+lv_obj_t * ui_ContainerDataAQI;
+lv_obj_t * ui_ContainerLabelDataAQI;
+lv_obj_t * ui_LabelValueAQI;
+lv_obj_t * ui_LabelUnitAQI;
+lv_obj_t * ui_BarValueAQI;
+lv_obj_t * ui_LabelNameAQI;
 // CUSTOM VARIABLES
 
 // EVENTS

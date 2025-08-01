@@ -48,7 +48,8 @@ struct aqi_indicator_t {
 
 void aqi_indicator_ui_init();
 
-void aqi_indicator_ui_data_show(uint16_t pm1, uint16_t pm2_5, uint16_t pm10, uint16_t co2, uint16_t temp, uint16_t humi, uint16_t tvoc);
+void aqi_indicator_ui_data_show(uint16_t pm1, uint16_t pm2_5, uint16_t pm10, uint16_t co2,
+                                uint16_t temp, uint16_t humi, uint16_t tvoc, uint16_t aqi);
 
 #ifdef __cplusplus
 } /*extern "C"*/

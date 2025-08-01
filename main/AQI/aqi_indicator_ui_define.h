@@ -48,6 +48,9 @@ extern "C" {
 #define TVOC_LINE_TOP &ui_ContainerLineRH
 #define TVOC_LINE_BOT &ui_ContainerLineTVOC
 
+#define AQI_LINE_TOP &ui_ContainerLineTVOC
+#define AQI_LINE_BOT NULL
+
 /*
  * AQI Indicator UI Attribute default values
  */
