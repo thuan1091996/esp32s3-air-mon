@@ -29,10 +29,8 @@ lv_obj_t * ui_ContainerBattery;
 lv_obj_t * ui_ImageBattery;
 lv_obj_t * ui_BarBattery;
 lv_obj_t * ui_ContainerLoadMain;
-lv_obj_t * ui_SpinnerLoadProgress;
-lv_obj_t * ui_ContainerLoading;
-lv_obj_t * ui_ContainerLoadName;
-lv_obj_t * ui_ImageLoadName;
+lv_obj_t * ui_ImageLoadLogo;
+lv_obj_t * ui_BarLoading;
 lv_obj_t * ui_LabelLoading;
 // CUSTOM VARIABLES
 
@@ -279,7 +277,7 @@ void ui_event_ScreenLoadAQI(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_SCREEN_LOADED) {
-        _ui_screen_change(&ui_ScreenSettingAQI, LV_SCR_LOAD_ANIM_FADE_ON, 700, 300, &ui_ScreenSettingAQI_screen_init);
+        _ui_screen_change(&ui_ScreenSettingAQI, LV_SCR_LOAD_ANIM_FADE_ON, 300, 1250, &ui_ScreenSettingAQI_screen_init);
     }
 }
 

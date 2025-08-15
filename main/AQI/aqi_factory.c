@@ -12,6 +12,8 @@
 #include "esp_err.h"
 #include "esp_log.h"
 
+#define AQI_FACTORY_ONLY_CONFIG_WIFI
+
 typedef enum {
     AQI_FACTORY_EVENT_BACK = 1,
     AQI_FACTORY_EVENT_NEXT,
@@ -75,7 +77,9 @@ void aqi_factory_init()
     if (_aqi_factory.setting_done != 0)
         return;
 
-    _aqi_factory.machine.State = &_aqi_factory_states[aqi_factory_state_language];
+    // Add event handlers for buttons
+    lv_obj_add_event_cb(ui_ButtonSettingBack, &__aqi_factory_event_handler, LV_EVENT_CLICKED, &_aqi_factory);
+    lv_obj_add_event_cb(ui_ButtonSettingNext, &__aqi_factory_event_handler, LV_EVENT_CLICKED, &_aqi_factory);
 
     // Show the main container, buttons and stage 
     lv_obj_clear_flag(ui_ContainerSettingButton, LV_OBJ_FLAG_HIDDEN);
@@ -83,10 +87,18 @@ void aqi_factory_init()
     lv_img_set_src(ui_ImageSettingStageLanguage, &ui_img_images_stage_green_png);
     lv_obj_clear_flag(ui_ContainerSettingMain, LV_OBJ_FLAG_HIDDEN);
 
-    lv_obj_add_event_cb(ui_ButtonSettingBack, &__aqi_factory_event_handler, LV_EVENT_CLICKED, &_aqi_factory);
-    lv_obj_add_event_cb(ui_ButtonSettingNext, &__aqi_factory_event_handler, LV_EVENT_CLICKED, &_aqi_factory);
+#if defined(AQI_FACTORY_ONLY_CONFIG_WIFI)
+    lv_img_set_src(ui_ImageSettingStageCountry, &ui_img_images_stage_green_png);
+    lv_obj_add_flag(ui_ContainerSettingStage, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_add_flag(ui_ButtonSettingBack, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_set_align(ui_ButtonSettingNext, LV_ALIGN_CENTER);
 
+    _aqi_factory.machine.State = &_aqi_factory_states[aqi_factory_state_wifi];
+    __aqi_factory_state_wifi_entry_handler((state_machine_t *)&_aqi_factory);
+#else
+    _aqi_factory.machine.State = &_aqi_factory_states[aqi_factory_state_language];
     __aqi_factory_state_language_entry_handler((state_machine_t *)&_aqi_factory);
+#endif
 }
 
 /********************************** Language State **********************************/

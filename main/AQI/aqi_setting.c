@@ -375,7 +375,7 @@ static state_machine_result_t __aqi_setting_state_wifi_handler(state_machine_t* 
         {
             ESP_LOGI(TAG, "Select button clicked event triggered");
 
-            if (aqi_wifi_exit_condition())
+            // if (aqi_wifi_exit_condition())
             {
                 return switch_state(pState, &_aqi_setting_states[aqi_setting_state_tab]);
             }

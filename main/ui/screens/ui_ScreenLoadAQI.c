@@ -5,6 +5,21 @@
 
 #include "../ui.h"
 
+static int loading_progress = 0;
+static lv_timer_t * loading_timer = NULL;
+
+static void loading_timer_cb(lv_timer_t * timer)
+{
+    loading_progress += 75;
+    lv_bar_set_value(ui_BarLoading, loading_progress, LV_ANIM_OFF);
+
+    if (loading_progress >= 1000)
+    {
+        lv_timer_del(loading_timer);
+        loading_timer = NULL;
+    }
+}
+
 void ui_ScreenLoadAQI_screen_init(void)
 {
     ui_ScreenLoadAQI = lv_obj_create(NULL);
@@ -162,47 +177,28 @@ void ui_ScreenLoadAQI_screen_init(void)
     lv_obj_set_style_bg_color(ui_ContainerLoadMain, lv_color_hex(0x201F26), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_ContainerLoadMain, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_SpinnerLoadProgress = lv_spinner_create(ui_ContainerLoadMain, 1000, 90);
-    lv_obj_set_width(ui_SpinnerLoadProgress, 348);
-    lv_obj_set_height(ui_SpinnerLoadProgress, 348);
-    lv_obj_set_x(ui_SpinnerLoadProgress, 226);
-    lv_obj_set_y(ui_SpinnerLoadProgress, 21);
-    lv_obj_clear_flag(ui_SpinnerLoadProgress, LV_OBJ_FLAG_CLICKABLE);      /// Flags
-    lv_obj_set_style_arc_color(ui_SpinnerLoadProgress, lv_color_hex(0x30323B), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_arc_opa(ui_SpinnerLoadProgress, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_arc_width(ui_SpinnerLoadProgress, 4, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_ImageLoadLogo = lv_img_create(ui_ContainerLoadMain);
+    lv_img_set_src(ui_ImageLoadLogo, &ui_img_images_load_en_us_png);
+    lv_obj_set_width(ui_ImageLoadLogo, LV_SIZE_CONTENT);   /// 268
+    lv_obj_set_height(ui_ImageLoadLogo, LV_SIZE_CONTENT);    /// 41
+    lv_obj_set_x(ui_ImageLoadLogo, 0);
+    lv_obj_set_y(ui_ImageLoadLogo, 150);
+    lv_obj_set_align(ui_ImageLoadLogo, LV_ALIGN_TOP_MID);
+    lv_obj_add_flag(ui_ImageLoadLogo, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+    lv_obj_clear_flag(ui_ImageLoadLogo, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
-    lv_obj_set_style_arc_img_src(ui_SpinnerLoadProgress, &ui_img_images_load_spinner_png,
-                                 LV_PART_INDICATOR | LV_STATE_DEFAULT);
+    ui_BarLoading = lv_bar_create(ui_ContainerLoadMain);
+    lv_bar_set_range(ui_BarLoading, 0, 1000);
+    lv_obj_set_width(ui_BarLoading, 700);
+    lv_obj_set_height(ui_BarLoading, 25);
+    lv_obj_set_x(ui_BarLoading, 0);
+    lv_obj_set_y(ui_BarLoading, 220);
+    lv_obj_set_align(ui_BarLoading, LV_ALIGN_TOP_MID);
 
-    ui_ContainerLoading = lv_obj_create(ui_SpinnerLoadProgress);
-    lv_obj_remove_style_all(ui_ContainerLoading);
-    lv_obj_set_width(ui_ContainerLoading, 268);
-    lv_obj_set_height(ui_ContainerLoading, 92);
-    lv_obj_set_x(ui_ContainerLoading, 40);
-    lv_obj_set_y(ui_ContainerLoading, 154);
-    lv_obj_clear_flag(ui_ContainerLoading, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-
-    ui_ContainerLoadName = lv_obj_create(ui_ContainerLoading);
-    lv_obj_remove_style_all(ui_ContainerLoadName);
-    lv_obj_set_width(ui_ContainerLoadName, 268);
-    lv_obj_set_height(ui_ContainerLoadName, 41);
-    lv_obj_clear_flag(ui_ContainerLoadName, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-
-    ui_ImageLoadName = lv_img_create(ui_ContainerLoadName);
-    lv_img_set_src(ui_ImageLoadName, &ui_img_images_load_en_us_png);
-    lv_obj_set_width(ui_ImageLoadName, LV_SIZE_CONTENT);   /// 268
-    lv_obj_set_height(ui_ImageLoadName, LV_SIZE_CONTENT);    /// 38
-    lv_obj_set_align(ui_ImageLoadName, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_ImageLoadName, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
-    lv_obj_clear_flag(ui_ImageLoadName, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-
-    ui_LabelLoading = lv_label_create(ui_SpinnerLoadProgress);
+    ui_LabelLoading = lv_label_create(ui_BarLoading);
     lv_obj_set_width(ui_LabelLoading, 95);
     lv_obj_set_height(ui_LabelLoading, 25);
-    lv_obj_set_x(ui_LabelLoading, 0);
-    lv_obj_set_y(ui_LabelLoading, 62);
-    lv_obj_set_align(ui_LabelLoading, LV_ALIGN_CENTER);
+    lv_obj_set_align(ui_LabelLoading, LV_ALIGN_TOP_MID);
     lv_label_set_text(ui_LabelLoading, "Loading...");
     lv_obj_set_style_text_color(ui_LabelLoading, lv_color_hex(0x6C748B), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_LabelLoading, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -211,4 +207,6 @@ void ui_ScreenLoadAQI_screen_init(void)
 
     lv_obj_add_event_cb(ui_ScreenLoadAQI, ui_event_ScreenLoadAQI, LV_EVENT_ALL, NULL);
 
+    // Create timer to update loading bar every 10ms for 1 second total
+    loading_timer = lv_timer_create(loading_timer_cb, 1, NULL);
 }

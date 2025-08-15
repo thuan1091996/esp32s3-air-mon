@@ -42,10 +42,8 @@ extern lv_obj_t * ui_ContainerBattery;
 extern lv_obj_t * ui_ImageBattery;
 extern lv_obj_t * ui_BarBattery;
 extern lv_obj_t * ui_ContainerLoadMain;
-extern lv_obj_t * ui_SpinnerLoadProgress;
-extern lv_obj_t * ui_ContainerLoading;
-extern lv_obj_t * ui_ContainerLoadName;
-extern lv_obj_t * ui_ImageLoadName;
+extern lv_obj_t * ui_ImageLoadLogo;
+extern lv_obj_t * ui_BarLoading;
 extern lv_obj_t * ui_LabelLoading;
 // CUSTOM VARIABLES
 
@@ -263,7 +261,6 @@ extern lv_obj_t * ui____initial_actions0;
 // IMAGES AND IMAGE SETS
 LV_IMG_DECLARE(ui_img_images_mobilesignal_png);    // assets/Images/MobileSignal.png
 LV_IMG_DECLARE(ui_img_images_batteryoutline_png);    // assets/Images/BatteryOutline.png
-LV_IMG_DECLARE(ui_img_images_load_spinner_png);    // assets/Images/Load_Spinner.png
 LV_IMG_DECLARE(ui_img_images_load_en_us_png);    // assets/Images/Load_en_US.png
 LV_IMG_DECLARE(ui_img_images_switch_back_png);    // assets/Images/Switch_Back.png
 LV_IMG_DECLARE(ui_img_images_light_mode_select_png);    // assets/Images/Light_Mode_Select.png
