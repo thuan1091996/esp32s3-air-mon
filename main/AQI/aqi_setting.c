@@ -212,7 +212,11 @@ static state_machine_result_t __aqi_setting_state_idle_handler(state_machine_t* 
 
             lv_scr_load_anim(ui_ScreenSettingAQI, LV_SCR_LOAD_ANIM_NONE, 0, 0, false);
 
+#if defined(AQI_FACTORY_ONLY_CONFIG_WIFI)
+            return switch_state(pState, &_aqi_setting_states[aqi_setting_state_wifi]);
+#else
             return switch_state(pState, &_aqi_setting_states[aqi_setting_state_tab]);
+#endif
         }
 
         default:
@@ -360,6 +364,10 @@ static state_machine_result_t __aqi_setting_state_wifi_entry_handler(state_machi
 {
     ESP_LOGI(TAG, "Entering to wifi state");
 
+#if defined(AQI_FACTORY_ONLY_CONFIG_WIFI)
+    lv_obj_clear_flag(ui_ButtonSettingSelect, LV_OBJ_FLAG_HIDDEN);
+#endif
+
     lv_label_set_text(ui_LabelSettingSelectButton, AQI_SETTING_BUTTON_SELECT_LABEL_BACK);
     lv_obj_clear_flag(ui_ContainerSettingWifi, LV_OBJ_FLAG_HIDDEN);
     aqi_wifi_event(aqi_wifi_event_config);
@@ -377,7 +385,11 @@ static state_machine_result_t __aqi_setting_state_wifi_handler(state_machine_t* 
 
             // if (aqi_wifi_exit_condition())
             {
+#if defined(AQI_FACTORY_ONLY_CONFIG_WIFI)
+                return switch_state(pState, &_aqi_setting_states[aqi_setting_state_idle]);
+#else                
                 return switch_state(pState, &_aqi_setting_states[aqi_setting_state_tab]);
+#endif
             }
             break;
         }
@@ -391,6 +403,10 @@ static state_machine_result_t __aqi_setting_state_wifi_handler(state_machine_t* 
 static state_machine_result_t __aqi_setting_state_wifi_exit_handler(state_machine_t* const pState)
 {
     ESP_LOGI(TAG, "Exiting from wifi state");
+
+#if defined(AQI_FACTORY_ONLY_CONFIG_WIFI)
+    lv_obj_add_flag(ui_ButtonSettingSelect, LV_OBJ_FLAG_HIDDEN);
+#endif
 
     lv_label_set_text(ui_LabelSettingSelectButton, AQI_SETTING_BUTTON_SELECT_LABEL_SELECT);
     lv_obj_add_flag(ui_ContainerSettingWifi, LV_OBJ_FLAG_HIDDEN);

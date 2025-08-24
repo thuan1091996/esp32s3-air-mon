@@ -12,8 +12,6 @@
 #include "esp_err.h"
 #include "esp_log.h"
 
-#define AQI_FACTORY_ONLY_CONFIG_WIFI
-
 typedef enum {
     AQI_FACTORY_EVENT_BACK = 1,
     AQI_FACTORY_EVENT_NEXT,
